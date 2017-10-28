@@ -1,0 +1,124 @@
+---
+title: "InvestigatingSignificance III: Democratsge"
+author: "Ben Wheeler"
+date: "April 7, 2017"
+output: html_notebook
+---
+####Investigating All Candidates in a Race as a single population
+
+##Purpose
+The purpose of this document is to make progress in determining significance of Twitter Percentages for Democrats in the New York Primary 2016.
+
+This analysis uses a different data structure than we have been using, it takes advantage of using each candidate as a single observation, but treats all candidates in all counties as a population. There are 62 counties in New York, of them all of them had tweets that were placed within their boundaries. This dataset includes 62 observations for each candidate. One observation for each county. Thus the democrat dataset includes 124 observations.
+
+##Key Takeaways
+* TBD
+* TBD
+
+####Read in file
+```{r}
+x ='C:\\Temp\\FINAL_INPUTS\\Box Sync\\R\\v4'
+setwd(x)
+d3 <- read.table(paste(getwd()[1],"v3_AllTags_002_AllSources_analysis_v3_310.csv",sep = '/'),
+                 header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
+```
+
+
+####Subset Data
+The below code subsets the candidates for plotting and additional testing.
+
+```{r subset data}
+DemHB <- subset(d3,d3$CANDIDATE == 'HILLARY' | d3$CANDIDATE == 'BERNIE')
+
+DemH <- subset(d3,d3$CANDIDATE == 'HILLARY')
+DemB <- subset(d3,d3$CANDIDATE == 'BERNIE')
+
+```
+
+####Define Function to Print out Statistics and Plot Data (gloop2)
+This uses the same function we used for the Republican data broken out in pairs.
+```{r}
+gloop2 <- function(n,data.in,subset1,subset2,label.main,label.X, label.Y,cand1,cand2){
+    RegModel.Model <- lm(Candidate_VS~data.in[,n], data=data.in)
+    Test <- summary(RegModel.Model)
+    Coef  <- Test[4]
+    corel <- cor(data.in$Candidate_VS,data.in[,n])
+    rvals <- c(Test[9],Test[8])
+    xlim <- c(0,1)
+    ylim <- c(0,1)
+      plot(subset1$Candidate_VS,subset1[,n],xlim=xlim, ylim=ylim, col='Blue',
+           xlab=label.X,
+           ylab =label.Y,
+           main = label.main)
+      points(subset2$Candidate_VS,subset2[,n],xlim=xlim, ylim=ylim, col='Red')
+      legend("right", 
+             legend=c(cand1, cand2),
+                col=c("blue","red"), 
+                pch=1, cex=0.8, inset =.01, box.lty=1)
+      var1 <- substr(toString(rvals[2]),1,5)
+      var2 <- substr(toString(rvals[1]),1,5)
+      var3 <- substr(toString(corel),1,5)
+      text(0.95,0.05,label=paste("R2:",var1))
+      text(0.923,0.1,label=paste("R2_adj:",var2))
+      text(0.95,0.175,label=paste("Cor:",var3))
+    return(list(
+      stats=c(Coef,rvals),
+      model=RegModel.Model
+    ))      
+}
+```
+
+
+#Outcomes
+This section looks at R-squared values for TweetShare vs. VoteShare for Hillary Clinton and Bernie Sanders.
+it returns quite a low Rsquared Value, but a very high P-Value.  This seems to suggest that performance on Twitter is describing some portion of the variance, however small. 
+http://stats.stackexchange.com/questions/133488/interpreting-high-p-value-and-low-correlation-value
+
+####Questions
+* Does R2 a measure of explanation of variance?
+* The P-value tells you where it is significant?
+* Correlation: Tells you the relationship? How does Correlation differ from R2.
+
+According to this link: http://blog.uwgb.edu/bansalg/statistics-data-analytics/linear-regression/what-is-the-difference-between-coefficient-of-determination-and-coefficient-of-correlation/
+The R value is the correlation Coefficient: Which means that the R2 value is literally the square of the correlation coefficient.
+See also: http://www.win-vector.com/blog/2011/11/correlation-and-r-squared/
+
+A commentary on why not to report correlation:
+http://www.win-vector.com/blog/2013/02/dont-use-correlation-to-track-prediction-performance/
+#### Main Arguments from Win-Vector Blog: Why not to use correlation
+* Correlation has *obscuring symmetries* (?) : I believe this means it's harder to see weird changes in the data.
+* R2 has *less*
+* Ultimate Decision: use R2, report both to compare to Tsou et al.
+
+
+
+```{r}
+d17 <- gloop2(78,DemHB,DemH,DemB,"17th","VoteShare","TweetShare","Hillary","Bernie")
+d17$stats
+
+
+d18 <- gloop2(79,DemHB,DemH,DemB,"18th","VoteShare","TweetShare","Hillary","Bernie")
+d18$stats
+
+d19b4 <- gloop2(80,DemHB,DemH,DemB,"19th Before Election Called","VoteShare","TweetShare","Hillary","Bernie")
+d19b4$stats
+
+d19aft <- gloop2(81,DemHB,DemH,DemB,"19th After Election Called","VoteShare","TweetShare","Hillary","Bernie")
+d19aft$stats
+
+d20 <- gloop2(82,DemHB,DemH,DemB,"20th","VoteShare","TweetShare","Hillary","Bernie")
+d20$stats
+
+db4 <- gloop2(83,DemHB,DemH,DemB,"All Tweets Before Election Called","VoteShare","TweetShare","Hillary","Bernie")
+db4$stats
+
+db4 <- gloop2(85,DemHB,DemH,DemB,"All Tweets","VoteShare","TweetShare","Hillary","Bernie")
+db4$stats
+
+```
+
+```{r log function of population}
+plot(log(DemH$Candidate_VS/DemH$PopOver18),log(DemH$Candidate_TS18/DemH$PopOver18))
+plot(log(DemB$Candidate_VS/DemB$PopOver18),log(DemB$Candidate_TS18/DemB$PopOver18))
+
+```
