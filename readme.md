@@ -16,7 +16,7 @@ for each time period  [*d17,*d18,*d19b4,*d19_aft_u,*d20,TS, etc]  (n = 7 minimum
 For each set of input location data [1,12,123,1239]  (n=4 (minimum))
 For both First-Last Detection and Normal(Hashtag detection).  (n =2)
 
-Looks like the total number of calculations we are looking at is roughly 2*4*7*8*2 = ~896 or more maybe, so hopefully, we can get it a little more programmatic. 
+Looks like the total number of calculations we are looking at is roughly 2 * 4 * 7 * 8 * 2 = ~896 or more maybe, so hopefully, we can get it a little more programmatic. 
 
 The different sources are going to require different input files. ie. 1and 2, requires a different source file from 1239,  I made the construction of this part pretty streamlined, but it will get tougher as we get to the Best Source 1 etc, with not enough records to really determine.
 
