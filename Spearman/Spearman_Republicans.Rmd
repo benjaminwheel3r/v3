@@ -1,0 +1,130 @@
+---
+title: "Spearman's Correlation Test - Republicans"
+author: "Ben Wheeler"
+date: "October 29, 2017"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+This document is the proper workspace to start reporting out Spearman's Rho's.
+
+####Read in file
+Set `x` equal to the directory in which the raw '310' input file exists.
+```{r}
+x ='C:\\Temp\\FINAL_INPUTS\\Box Sync\\R\\v4'
+setwd(x)
+
+d3 <- read.table(paste(getwd()[1],"v3_AllTags_002_AllSources_analysis_v3_310.csv",sep = '/'),
+                 header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
+```
+
+####Subset Republicans
+The below code subsets the candidates for plotting and additional testing.
+
+```{r subset data}
+RepTKC <- subset(d3,d3$CANDIDATE == 'TRUMP' | d3$CANDIDATE == 'KASICH' | d3$CANDIDATE == 'CRUZ')
+RepTK  <- subset(d3,d3$CANDIDATE == 'TRUMP'  | d3$CANDIDATE == 'KASICH')
+RepCK  <- subset(d3,d3$CANDIDATE == 'KASICH' | d3$CANDIDATE == 'CRUZ')
+RepTC  <- subset(d3,d3$CANDIDATE == 'TRUMP'  | d3$CANDIDATE == 'CRUZ')
+
+RepT <- subset(d3,d3$CANDIDATE == 'TRUMP')
+RepK <- subset(d3,d3$CANDIDATE == 'KASICH')
+RepC <- subset(d3,d3$CANDIDATE == 'CRUZ')
+
+```
+
+####gloop adaptation
+The purpose of this is to import the g{raph}loop function and alter it.
+`gloop_spearman` function written to include new sets called Candidate_VS_RANK which should re-calculate each time the function is run. Ranks should ve calculated for the input data and mapped to Ranktest column
+
+* write up Spearman read out.
+* write up 
+
+```{r}
+gloop_spearman <- function(n,data.in,subset1,subset2,subset3,label.main,label.X, label.Y){
+  data.in$Candidate_VS_Rank <-  rank(data.in$Candidate_VS)
+  data.in$Ranktest<- rank(data.in[,n])
+  spear = cor(data.in$Candidate_VS_Rank,data.in$Ranktest, method = 'spearman')
+  
+  
+  RegModel.Model <- lm(Candidate_VS~data.in[,n], data=data.in)
+    Test <- summary(RegModel.Model)
+    Coef  <- Test[4]
+    rvals <- c(Test[9],Test[8])
+    xlim <- c(0,1)
+    ylim <- c(0,1)
+      plot(subset1[,n],subset1$Candidate_VS,xlim=xlim, ylim=ylim, col='Blue',
+           xlab=label.X,
+           ylab =label.Y,
+           main = label.main)
+      points(subset2[,n],subset2$Candidate_VS,xlim=xlim, ylim=ylim, col='Green')
+      points(subset3[,n],subset3$Candidate_VS,xlim=xlim, ylim=ylim, col='Red')
+      legend("right", 
+             legend=c("Trump", "Kasich","Cruz"),
+                col=c("blue","Green","red"), 
+                pch=1, cex=0.8, inset =.01, box.lty=1)
+      var1 <- substr(toString(rvals[2]),1,5)
+      var2 <- substr(toString(rvals[1]),1,5)
+      text(0.95,0.05,label=paste("R2:",var1))
+      text(0.923,0.1,label=paste("R2_adj:",var2))
+    return(list(
+      stats=c(Coef,rvals),
+      model=RegModel.Model,s=spear
+    ))      
+}
+
+gloop2 <- function(n,data.in,subset1,subset2,label.main,label.X, label.Y,cand1,cand2){
+    RegModel.Model <- lm(Candidate_VS~data.in[,n], data=data.in)
+    Test <- summary(RegModel.Model)
+    Coef  <- Test[4]
+    rvals <- c(Test[9],Test[8])
+    xlim <- c(0,1)
+    ylim <- c(0,1)
+      plot(subset1$Candidate_VS,subset1[,n],xlim=xlim, ylim=ylim, col='Blue',
+           xlab=label.X,
+           ylab =label.Y,
+           main = label.main)
+      points(subset2$Candidate_VS,subset2[,n],xlim=xlim, ylim=ylim, col='Red')
+      legend("right", 
+             legend=c(cand1, cand2),
+                col=c("blue","red"), 
+                pch=1, cex=0.8, inset =.01, box.lty=1)
+      var1 <- substr(toString(rvals[2]),1,5)
+      var2 <- substr(toString(rvals[1]),1,5)
+      text(0.95,0.05,label=paste("R2:",var1))
+      text(0.923,0.1,label=paste("R2_adj:",var2))
+    return(list(
+      stats=c(Coef,rvals),
+      model=RegModel.Model
+    ))      
+}
+```
+
+```{r test gloop}
+d17 <- gloop_spearman(111,RepTKC,RepT,RepK,RepC,"17th","TweetShare","VoteShare")
+d18 <- gloop_spearman(112,RepTKC,RepT,RepK,RepC,"18th","TweetShare","VoteShare")
+d19b4 <- gloop_spearman(113,RepTKC,RepT,RepK,RepC,"19th Before Election Called","TweetShare","VoteShare")
+d19aft <- gloop_spearman(114,RepTKC,RepT,RepK,RepC,"19th After Election Called","TweetShare","VoteShare")
+d20 <- gloop_spearman(115,RepTKC,RepT,RepK,RepC,"20th","TweetShare","VoteShare")
+db4 <- gloop_spearman(116,RepTKC,RepT,RepK,RepC,"All Tweets Before Election Called","TweetShare","VoteShare")
+dall <- gloop_spearman(117,RepTKC,RepT,RepK,RepC,"All Tweets","TweetShare","VoteShare")
+
+p1 <- c("TS17","TS18","TS19_b4","TS19_aft","TS20","db4","TS")
+p2 <- c(d17$s,d18$s,d19b4$s,d19aft$s,d20$s,db4$s,dall$s)
+
+df_original <- data.frame(p1,p2)
+df_original
+df_transpose = t(df_original)
+df_transpose
+
+```
+
+```{r output}
+output
+write.csv(df_transpose,paste(getwd()[1],"Spearman_CorrelationCoef.csv",sep = '/'),
+          append = FALSE, quote = TRUE, sep = ",",
+          eol = "\n", na = "NA", dec = ".", row.names = TRUE,
+          col.names = TRUE, qmethod = c("escape", "double"),
+          fileEncoding = "")
+
+```
