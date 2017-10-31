@@ -69,6 +69,8 @@ gloop_spearman <- function(n,data.in,subset1,subset2,subset3,label.main,label.X,
       text(0.923,0.1,label=paste("R2_adj:",var2))
     return(list(
       stats=c(Coef,rvals),
+      model=RegModel.Model,
+      s=spear
     ))      
 }
 
