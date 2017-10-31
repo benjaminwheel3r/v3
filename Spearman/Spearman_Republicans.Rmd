@@ -69,12 +69,15 @@ gloop_spearman <- function(n,data.in,subset1,subset2,subset3,label.main,label.X,
       text(0.923,0.1,label=paste("R2_adj:",var2))
     return(list(
       stats=c(Coef,rvals),
-      model=RegModel.Model,s=spear
     ))      
 }
 
-gloop2 <- function(n,data.in,subset1,subset2,label.main,label.X, label.Y,cand1,cand2){
-    RegModel.Model <- lm(Candidate_VS~data.in[,n], data=data.in)
+gloop2_spearman <- function(n,data.in,subset1,subset2,label.main,label.X, label.Y,cand1,cand2){
+  data.in$Candidate_VS_Rank <-  rank(data.in$Candidate_VS)
+  data.in$Ranktest<- rank(data.in[,n])
+  spear = cor(data.in$Candidate_VS_Rank,data.in$Ranktest, method = 'spearman')
+  
+  RegModel.Model <- lm(Candidate_VS~data.in[,n], data=data.in)
     Test <- summary(RegModel.Model)
     Coef  <- Test[4]
     rvals <- c(Test[9],Test[8])
@@ -95,9 +98,23 @@ gloop2 <- function(n,data.in,subset1,subset2,label.main,label.X, label.Y,cand1,c
       text(0.923,0.1,label=paste("R2_adj:",var2))
     return(list(
       stats=c(Coef,rvals),
-      model=RegModel.Model
+      model=RegModel.Model,
+      s=spear
     ))      
 }
+
+gloop3_spearman <- function(n,data.in,subset1,subset2,label.main,label.X, label.Y,cand1,cand2)
+  {
+  data.in$Candidate_VS_Rank <-  rank(data.in$Candidate_VS)
+  data.in$Ranktest<- rank(data.in[,n])
+  spear = cor(data.in$Candidate_VS_Rank,data.in$Ranktest, method = 'spearman')
+ 
+  return(list(
+      stats=c(Coef,rvals),
+      model=RegModel.Model,
+      s=spear))
+}
+  
 ```
 
 ```{r test gloop}
@@ -118,6 +135,42 @@ df_transpose = t(df_original)
 df_transpose
 
 ```
+
+####Attempt at For Loop
+The Below section is meant to cycle through the three groupings for the republicans, potentially all the remaining variables, that way we can just update for each segment.
+
+This section I am struggling to make gloop2 or gloop3 spearman work.
+```{r test gloop as loop}
+c <- list(RepTC,RepCK,RepTK)
+vars <- rbind.data.frame(
+    c("RepT","RepC","Trump","Cruz"), 
+    c("RepC","RepK","Cruz","Kasich"), 
+    c("RepT","RepK","Trump","Kasich")
+)
+
+
+for (i in 1:3){
+  d17 <- gloop3_spearman(111,c[i],get(paste(vars[i,1])),get(paste(vars[i,2])),"17th","TweetShare","VoteShare",get(paste(vars[i,3])),get(paste(vars[i,4])))
+  d18 <- gloop3_spearman(112,c[i],get(paste(vars[i,1])),get(paste(vars[i,2])),"18th","TweetShare","VoteShare",get(paste(vars[i,3])),get(paste(vars[i,4])))
+  d19b4 <- gloop3_spearman(113,c[i],get(paste(vars[i,1])),get(paste(vars[i,2])),"19th Before Election Called","TweetShare","VoteShare",get(paste(vars[i,3])),get(paste(vars[i,4])))
+  d19aft <- gloop3_spearman(114,c[i],get(paste(vars[i,1])),get(paste(vars[i,2])),"19th After Election Called","TweetShare","VoteShare",get(paste(vars[i,3])),get(paste(vars[i,4])))
+  d20 <- gloop3_spearman(115,c[i],get(paste(vars[i,1])),get(paste(vars[i,2])),"20th","TweetShare","VoteShare",get(paste(vars[i,3])),get(paste(vars[i,4])))
+  db4 <- gloop3_spearman(116,c[i],get(paste(vars[i,1])),get(paste(vars[i,2])),"All Tweets Before Election Called","TweetShare","VoteShare",get(paste(vars[i,3])),get(paste(vars[i,4])))
+  dall <- gloop3_spearman(117,c[i],get(paste(vars[i,1])),get(paste(vars[i,2])),"All Tweets","TweetShare","VoteShare",get(paste(vars[i,3])),get(paste(vars[i,4])))
+  }
+
+
+p1 <- c("TS17","TS18","TS19_b4","TS19_aft","TS20","db4","TS")
+p2 <- c(d17$s,d18$s,d19b4$s,d19aft$s,d20$s,db4$s,dall$s)
+
+df_original <- data.frame(p1,p2)
+df_original
+df_transpose = t(df_original)
+df_transpose
+
+```
+
+
 
 ```{r output}
 output
