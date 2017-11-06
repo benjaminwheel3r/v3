@@ -1,0 +1,418 @@
+---
+title: 'Spatial AutoCorrelation Notebook:'
+author: "Ben Wheeler"
+date: "October 29, 2017"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())   #clear out memory
+```
+### Moving Forward:
+The attempt of this notebook is to take a Moran's I workthrough of past data and apply it to my current datasets for it's applicable Spatial AutoCorrelation.
+
+This workflow has been proved out with the true Data, Now the only thing left is to identify where and when these statistics need to be applied for my paper.
+#### NEXT STEP
+Moving all of these pieces into a single function or script so it can be run in a straightforward fashion.
+
+
+## R Tutorial of Spatial Data
+
+What did I learn from mgimond's tutorial?
+1. learned how to calculate Moran's I from ~scratch~
+2. Introduced to tmap, which should help with nicer looking maps
+
+What did I learn from Jerry's tutorial?
+1. I relearned what a z-score is.
+2. I learned how moran's I works (kind of)
+3. I need to figure out how to use either polygons or points for my counties.
+4. How would I conceptualize these points when multiple candidates exist at the same location.
+
+```{r}
+
+x = "C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3.csv"
+
+getwd()
+library(sp)
+library(rgdal)
+library(RColorBrewer)
+library(spdep)
+library(lattice)
+library(latticeExtra)
+library(maptools)
+library(tmap)
+
+
+#prevents lat long rounding
+options("scipen" = 100)
+#setwd()
+
+#reads in Countylayer
+co = readOGR(dsn = getwd(),layer = "NY_CNTY",integer64="warn.loss")
+df_co = data.frame(co)
+sl3 = list('sp.polygons', co, col="grey")
+spdf_co = SpatialPolygonsDataFrame(co,df_co)
+
+View(spdf_co2@data)
+```
+
+## Joining Variables:
+This join executed based on this excercise.
+http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS2_MergingSpatialData_part1_Joins.html
+
+```{r Joining Source Data}
+spdf_data <- read.table(x,
+                 header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
+spdf_co2 <- merge(spdf_co, spdf_data, by.x = "NAME", by.y = "County")
+```
+
+
+## Prep Plotting map
+```{r plotting maps_NY}
+# Original dependent variable
+#spplot(spdf_co, 'COUNTYFP', colorkey = FALSE, scales=list(draw=T))
+spplot(spdf_co2, 'Trump_VS', colorkey = FALSE, scales=list(draw=T))
+
+tm_shape(spdf_co2) + tm_polygons(style="quantile", col = 'Trump_VS') +
+  tm_legend(outside = TRUE, text.size = .8) 
+```
+
+
+##Determining Neighbours
+[see tutorial](https://mgimond.github.io/Spatial/spatial-autocorrelation-in-r.html)
+I may need to think about determining neighbours with Bridges and railroadlines for the NYC metropolitan areas, and how does that affect analyses? idk.
+
+###### [DOT_Railroad zip](http://gis.ny.gov/gisdata/fileserver/?DSID=904&file=NYSDOTRailroad_May2013.zip) ---[metadata](http://gis.ny.gov/gisdata/metadata/dot.Railroad.shp.xml)
+
+###### [DOT_Bridge zip](http://gis.ny.gov/gisdata/fileserver/?DSID=397&file=NYSDOTBridges.zip)  --- [metadata](http://gis.ny.gov/gisdata/metadata/dot.Bridges.xml)
+It is important to assign `row.names` to a Unique identifier so that the data can be verified and checked.
+
+This may or may not need to get figured out due to the differences with this file over the County/congressional districts one. THe Values are named based on FID, which should be referenced by a +1 due to counting starting at 1 instead of 0 in R.
+
+```{r determining Neighbours}
+nb <- poly2nb(spdf_co2,queen=TRUE,row.names = spdf_co2$UniqueID)
+nb[45][1] = c(as.integer(62)) # References Richmond[45] to Kings County[62]
+
+nb_rook <- poly2nb(spdf_co2,queen=FALSE)
+nb_snap <- poly2nb(spdf_co2,
+                   queen = TRUE,
+                   snap = 0
+                     )
+
+```
+# stopping point
+
+### Computing Weights
+```{r Computing Weights}
+lw = nb2listw(nb, style="W", zero.policy = TRUE)
+lw$weights[1]
+Pop.lag = lag.listw(lw, spdf_co2$Trump_VS)
+Pop.lag
+```
+
+#Calculating Moran's I
+```{r Calculating Moran`s I}
+M = lm(Pop.lag~spdf_co2$Trump_VS)
+
+# Plot the data
+OP <- par(pty="s")  # Force a square plot
+ plot( Pop.lag ~ spdf_co2$Trump_VS, pch=20, asp=1)
+ abline(M, col="red") # Add the regression line from model M
+par(OP) # Revert back to default plot settings
+```
+
+###Adding Residuals and Predictions to SpatialDataframe
+```{r Predictions and Residuals}
+spdf_co2$resid = resid(M)
+spdf_co2$predict = predict(M)
+```
+
+```{r visualizing Predictions and Residuals}
+tmap_mode(mode = "view")
+par(mfrow=c(1,2))
+tm_shape(spdf_co2) + tm_polygons(style="quantile", col = "predict") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(spdf_co2) + tm_polygons(style="quantile", col = "resid") +
+  tm_legend(outside = TRUE, text.size = .8) 
+
+```
+
+```{r include=FALSE, echo=TRUE}
+tm_shape(spdf_co2) + tm_polygons(style="quantile", col = "predict") +
+  tm_legend(outside = TRUE, text.size = .8) 
+```
+
+
+Pop.lag ~ spdf_co2$Trump_VS.
+Note aspect was used to remove the inability to visualize the Moran's I value on the same graphic. 
+```{r}
+coef(M)[2]
+n <- 499   # Define the number of simulations
+I.r <- vector()  # Create an empty vector
+
+for (i in 1:n){
+  # Randomly shuffle Voting values
+  x <- sample(spdf_co2$Trump_VS, replace=FALSE)
+  # Compute new set of lagged values
+  x.lag <- lag.listw(lw, x)
+  # Compute the regression slope
+  M.r <- lm(x.lag ~ x)
+  I.r[i] <- coef(M.r)[2]
+}
+
+# Plot histogram of simulated Moran's I values
+# then add our observed Moran's I value to the plot
+hist(I.r, main=NULL, plot = TRUE, asp =.007)
+abline(v=coef(M)[2], col="red")
+par(OP)
+```
+
+```{r}
+N.greater <- sum(coef(M)[2] > I.r)
+p <- min(N.greater + 1, n + 1 - N.greater) / (n + 1)
+p
+```
+
+
+```{r}
+moran.test(spdf_co2$Trump_VS,lw)
+```
+
+```{r monte-carlo simulated MoransI}
+MC<- moran.mc(spdf_co2$Trump_VS, lw, nsim=599)
+MC
+plot(MC, main=NULL)
+```
+This uses a distance-measure to calculate neighbours.
+```{r}
+coo <- coordinates(spdf_co2)
+S.dist  <-  dnearneigh(coo, 0, 0.5)
+MI  <-  moran.mc(spdf_co2$Trump_VS, lw, nsim=599,zero.policy=T)
+plot(MI)
+```
+
+### ESRI Documentation on Moran's I
+http://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/h-how-spatial-autocorrelation-moran-s-i-spatial-st.htm
+The Spatial Autocorrelation (Global Moran's I) tool is an inferential statistic, which means that the results of the analysis are always interpreted within the context of its null hypothesis. For the Global Moran's I statistic, the null hypothesis states that the attribute being analyzed is randomly distributed among the features in your study area; said another way, the spatial processes promoting the observed pattern of values is random chance. Imagine that you could pick up the values for the attribute you are analyzing and throw them down onto your features, letting each value fall where it may. This process (picking up and throwing down the values) is an example of a random chance spatial process.
+
+When the p-value returned by this tool is statistically significant, you can reject the null hypothesis. The table below summarizes interpretation of results:
+
+The p-value is not statistically significant.
+You cannot reject the null hypothesis. It is quite possible that the spatial distribution of feature values is the result of random spatial processes. The observed spatial pattern of feature values could very well be one of many, many possible versions of complete spatial randomness (CSR).
+
+The p-value is statistically significant, and the z-score is positive.
+You may reject the null hypothesis. The spatial distribution of high values and/or low values in the dataset is more spatially clustered than would be expected if underlying spatial processes were random.
+
+The p-value is statistically significant, and the z-score is negative.
+You may reject the null hypothesis. The spatial distribution of high values and low values in the dataset is more spatially dispersed than would be expected if underlying spatial processes were random. A dispersed spatial pattern often reflects some type of competitive process-a feature with a high value repels other features with high values; similarly, a feature with a low value repels other features with low values.
+
+
+
+
+
+
+
+
+
+#Tutorial From Jerry
+
+
+```{r sierra}
+#rm(list = ls())   #clear out memory
+# set up tools:
+
+# 1. Install packages (comment if already installed)
+#install.packages("sp")
+#install.packages("rgdal")
+#install.packages("RColorBrewer")
+#install.packages("spdep")
+#install.packages("lattice")
+#install.packages("latticeExtra")
+#install.packages("maptools")
+#install.packages("tmap") #added by BEN
+
+#2. Add libraries from installed packages
+library(sp)
+library(rgdal)
+library(RColorBrewer)
+library(spdep)
+library(lattice)
+library(latticeExtra)
+library(maptools)
+# set the scientific notation option really high to avoid rounding latitude/longitude values
+
+options("scipen" = 100)
+
+# Data downloaded from https://www.ncdc.noaa.gov/cdo-web/search as CSV:
+# Dataset "Normals Monthly", Date range "2010-01-01 to 2010-12-01", Search for "States", Search term "CA"
+# Custom Normal Monthly Normals CSV, and check Geographic Location box, units Metric, 
+# Selected long-term averages (normals) under Precipitation (snowfall and precip),
+# and average, diurnal temperature range (DUTR), monthly minimum (TMIN) and maximum (TMAX) temperature.
+# Then graphically selected to cover Sierra Nevada to Lassen extent, and then exported to a new CSV.
+
+setwd("C:\\TEMP\\R_test\\Sierra")
+sierraData = read.csv("Sierra2LassenData.csv")
+names(sierraData)
+year = 2010 # See download above
+month = 2   ##### Select the month to use  #####
+yearmonth = year * 100 + month
+
+mon = subset(sierraData, sierraData$DATE == yearmonth,
+                 select=c(FID, STATION, STATION_NA, ELEVATION, LONGITUDE, LATITUDE, DATE,
+                          MLY_PRCP_N, MLY_SNOW_N, MLY_TAVG_N, MLY_DUTR_N, MLY_TMAX_N, MLY_TMIN_N))
+
+summary(mon)  # Note the minimum values of -9999 and such for all of the observational data
+# See documentation from NCDC -- -9999 means missing data, and there are other special codes
+# So change these to ND.  Should be able to shorten this with a loop or apply function, but this works...
+mon$MLY_PRCP_N[mon$MLY_PRCP_N < -1000] = NA
+mon$MLY_SNOW_N[mon$MLY_SNOW_N < -1000] = NA
+mon$MLY_TAVG_N[mon$MLY_TAVG_N < -1000] = NA
+mon$MLY_TMAX_N[mon$MLY_TMAX_N < -1000] = NA
+mon$MLY_TMIN_N[mon$MLY_TMIN_N < -1000] = NA
+mon$MLY_DUTR_N[mon$MLY_DUTR_N < -1000] = NA
+summary(mon)  # Note the better results for observational data
+vars = subset(mon, select=c(ELEVATION, LONGITUDE, LATITUDE, MLY_PRCP_N, MLY_SNOW_N, 
+                            MLY_TAVG_N, MLY_DUTR_N, MLY_TMAX_N,MLY_TMIN_N))
+pairs(vars)  # Note the correlation between avg, min and max temperatures with elevation
+# attach(mondata)
+
+```
+### County Data for basemap
+California counties downloaded from ArcGIS and saved in data folder,  path accessed as ```getwd()``` from working directory.
+
+```{r}
+co = readOGR(dsn = getwd(),layer = "CA_counties")
+ct = readOGR(dsn = getwd(),layer = "CA_places")
+#cont = readOGR(dsn = getwd(),layer = "ca_contours500gcs")
+```
+
+This chunk preps data in the shapefile, this would need to be done after a merge potentially.
+```{r}
+monthnames = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+
+#create a function to remove records with missing data in specific columns
+completeFun = function(data, desiredCols) {
+  completeVec = complete.cases(data[, desiredCols])
+  return(data[completeVec, ])
+}
+mon = completeFun(mon, c("MLY_PRCP_N","MLY_SNOW_N","MLY_TAVG_N", "MLY_DUTR_N", "MLY_TMAX_N", "MLY_TMIN_N"))
+
+deplist = c("Temp", "Min Temp", "Max Temp", "Precip", "Snowfall")
+######  CHOOSE WHICH DEPENDENT VARIABLE -- COMMENT OUT OTHERS with Ctrl-Sh-C:
+#depcode = 1; mon$dependent = mon$MLY_TAVG_N
+ depcode = 2; mon$dependent = mon$MLY_TMIN_N
+# depcode = 3; mon$dependent = mon$MLY_TMAX_N
+# depcode = 4; mon$dependent = mon$MLY_PRCP_N
+# depcode = 5; mon$dependent = mon$MLY_SNOW_N
+```
+
+setting up the map!
+```{r}
+# Set up spplot symbolization
+trellis.par.set(sp.theme()) # sets color ramp to bpy.colors()
+nclr = 7
+coldwarm.palette = brewer.pal(n = nclr, name = "Spectral") #create a color palette
+# High values will be blue, which works for precipitation (red is dry) or snow (blue is more snow)
+# If dependent variable is some type of temperature, reverse colors so red is hot, blue is cold:
+if (length(subset(c(1,2,3), c(1,2,3) == depcode) == 1)) {coldwarm.palette = coldwarm.palette[nclr:1]}
+
+model1 = lm(mon$dependent ~ mon$ELEVATION) # + mon$LATITUDE)# * mon$LONGITUDE)
+summary(model1)
+mon$resid = resid(model1)
+mon$predict = predict(model1) 
+formula1 = as.character(model1$call[2])
+
+coeff = model1$coefficients
+# for (i in 2:length(coeff)) {
+#   submodel = lm(mon$dependent ~ )
+#   plot(mon$ELEVATION,mon$dependent,xlab=names(coeff[i]),ylab=deplist[depcode])
+#   abline(model1)}
+
+if (length(coeff) == 2) {
+  if (depcode<4) {
+    plot(mon$ELEVATION,mon$dependent,xlab=names(coeff[2]),ylab=deplist[depcode])
+    abline(model1)
+  }
+  }
+```
+
+## Bringing in Spatial Data using spdep
+Get weather station coordinates and create a SpatialPointsDataFrame with known projection in WGS 84 
+```{r reading in spatial data}
+
+latlong <-  "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+mon$coords = cbind(mon$LONGITUDE, mon$LATITUDE)
+spdf = SpatialPointsDataFrame(mon$coords, mon, proj4string = CRS(latlong))
+
+r2 = paste("  r-sq =",as.character(as.integer(summary(model1)$r.squared * 10000)/100),"%")
+indeps = "Independent Vars:"
+allvars = all.vars(formula(model1))
+for (i in 3:length(allvars)) {
+  indeps = paste(indeps,allvars[i],",")
+}
+indeps = paste(indeps,r2) # text on bottom of map for r-sq
+```
+
+#### spplot method.  First create layers for a basemap of selected cities and CA counties
+```{r packing lists for plotting}
+
+# sl0 = list('sp.lines',cont, pch=19, cex=.8, col='bisque') # probably won't use unless plot order figured out
+sl1 = list('sp.points', ct, pch=19, cex=.8, col='grey')
+sl2 = list('sp.pointLabel', ct, label=ct$AREANAME,
+             cex=0.7, col='grey')
+sl3 = list('sp.polygons', co, col="grey")
+sl4 = list('sp.text', c(-119.9,35.6), indeps, cex = 0.7)  # was formula1
+```
+
+
+```{r plotting maps}
+# Original dependent variable
+spplot(spdf, "dependent", sp.layout = list(sl1, sl2, sl3),
+       key.space=list(x=0.6,y=1.0,corner=c(0,1)),
+       scales=list(draw=T),
+       auto.key = list(title = paste(monthnames[month], as.character(deplist[depcode])), cex.title=1.2),
+       col.regions = coldwarm.palette, cex = 1.6,
+       cuts = 7, first = TRUE)
+
+```
+
+### This Section is a prediction
+This section of the analysis maps the predictions of the model using 
+```{r}
+# Prediction
+spplot(spdf, "predict", sp.layout = list(sl1, sl2, sl3, sl4),
+       key.space=list(x=0.6,y=1.0,corner=c(0,1)),
+       scales=list(draw=T),
+       auto.key = list(title = paste(monthnames[month],"prediction\n",as.character(deplist[depcode])), cex.title=1.2),
+       col.regions = coldwarm.palette, cex = 1.6,
+       cuts = 7)
+summary(model1)
+
+```
+
+### Looking at Residuals
+
+```graph2nb``` does an anlysis to determine relative neighbours, this allows for spatial auto-correlation analysis.
+
+```{r}
+spplot(spdf, "resid", sp.layout = list(sl1, sl2, sl3, sl4),
+       key.space=list(x=0.6,y=1.0,corner=c(0,1)),
+       scales=list(draw=T),
+       auto.key = list(title = paste(monthnames[month],"residual\n",as.character(deplist[depcode])), cex.title=1.2),
+       col.regions = coldwarm.palette, cex = 1.6,
+       cuts = 7)
+
+crds = coordinates(spdf)
+col.rel.nb = graph2nb(relativeneigh(crds), sym=TRUE)
+plot(col.rel.nb, crds, col = "light blue")
+lm.morantest(model1, listw = nb2listw(col.rel.nb, style="W"))
+# Might also try adding a hillshade:  "ca_hillsh_WGS84.tif"
+```
+#### The standard deviate is the Z score, a significant return for this is between +1.96 and -1.96 it is actually a measure of the difference from the theoretical mean.
+* the Z-value is `#r lm.morantest(model1, listw = nb2listw(col.rel.nb, style="W"))[1]`
+* the p-value is `#r lm.morantest(model1, listw = nb2listw(col.rel.nb, style="W"))[2]`
+
+#####Therefore these values are significant.
