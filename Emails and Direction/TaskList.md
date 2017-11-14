@@ -15,9 +15,16 @@ Determine assumptions, and identify data structure necessary for testing Moran's
 ### 3. Spatial Autocorrelation - Phase II  : Implementation
 #### Phase I: Deadline 11/10
 #### Key Issues: 
-Determine how to test for Spatial Autocorrelation for multiple records at each location. (This may not be possible.)
+Determine how to test for Spatial Autocorrelation for multiple records at each location. (This is not possible.)
+However, it will be key for evaluating either Spearman's Rho Correlations.
+
+
 
 ### 4. Geographic Weighted Regression - Phase I : Basic Concepts and implementation
-#### 
+#### Key Issues:
+The only way to move forward at this point is to specify an OLS model, and then test it's Residuals for Spatial AutoCorrelation, using Moran's I,  then after doing that, I need to use GWR(See https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3155330/ ). 
 
-### 5. GWR - Bonferroni Correction.
+### 5. GWR - OLS
+#### Key Issues:
+
+### 6. GWR - Bonferroni Correction.
