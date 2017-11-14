@@ -1,0 +1,112 @@
+---
+title: "Moran's_I"
+author: "Ben Wheeler"
+date: "November 6, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set-UP
+```{r}
+x = "C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3.csv"
+
+getwd()
+library(sp)
+library(rgdal)
+library(RColorBrewer)
+library(spdep)
+library(lattice)
+library(latticeExtra)
+library(maptools)
+library(tmap)
+
+#prevents lat long rounding
+options("scipen" = 100)
+#setwd()
+
+#reads in Countylayer
+co = readOGR(dsn = getwd(),layer = "NY_CNTY",integer64="warn.loss")
+df_co = data.frame(co)
+sl3 = list('sp.polygons', co, col="grey")
+spdf_co = SpatialPolygonsDataFrame(co,df_co)
+
+
+View(spdf_co2@data)
+spdf_data <- read.table(x,
+                 header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
+spdf_co2 <- merge(spdf_co, spdf_data, by.x = "NAME", by.y = "County")
+
+#Setting neighbours
+nb <- poly2nb(spdf_co2,queen=TRUE,row.names = spdf_co2$UniqueID)
+nb[45][1] = c(as.integer(62)) # References Richmond[45] to Kings County[62]
+
+nb_rook <- poly2nb(spdf_co2,queen=FALSE)
+nb_snap <- poly2nb(spdf_co2,
+                   queen = TRUE,
+                   snap = 0
+                     )
+```
+
+# Morans I Estimator
+Update `input` with the correct Variable in the shapefile will allow one-stop shopping for Moran's I.
+```{r Calculating MoransI}
+input = spdf_co2$Hillary_VS
+
+lw = nb2listw(nb, style="W", zero.policy = TRUE)
+Pop.lag = lag.listw(lw, input)
+
+M = lm(Pop.lag~input)
+
+# Plot the data
+OP <- par(pty="s")  # Force a square plot
+ plot( Pop.lag ~ input, pch=20, asp=1)
+ abline(M, col="red") # Add the regression line from model M
+par(OP) # Revert back to default plot settings
+spdf_co2$resid = resid(M)
+spdf_co2$predict = predict(M)
+
+coef(M)[2]
+n <- 499   # Define the number of simulations
+I.r <- vector()  # Create an empty vector
+
+for (i in 1:n){
+  # Randomly shuffle Voting values
+  x <- sample(input, replace=FALSE)
+  # Compute new set of lagged values
+  x.lag <- lag.listw(lw, x)
+  # Compute the regression slope
+  M.r <- lm(x.lag ~ x)
+  I.r[i] <- coef(M.r)[2]
+}
+
+# Plot histogram of simulated Moran's I values
+# then add our observed Moran's I value to the plot
+hist(I.r, main=NULL, plot = TRUE, asp =.007)
+abline(v=coef(M)[2], col="red")
+par(OP)
+
+
+moran.test(input,lw)
+
+
+
+'tmap_mode(mode = "view")
+par(mfrow=c(1,2))
+tm_shape(spdf_co2) + tm_polygons(style="quantile", col = "predict") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(spdf_co2) + tm_polygons(style="quantile", col = "resid") +
+  tm_legend(outside = TRUE, text.size = .8) 
+
+```
+
+
+
+
+
+
+
+

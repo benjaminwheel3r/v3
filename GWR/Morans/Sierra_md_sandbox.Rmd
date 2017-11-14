@@ -102,7 +102,7 @@ nb_snap <- poly2nb(spdf_co2,
                      )
 
 ```
-# stopping point
+
 
 ### Computing Weights
 ```{r Computing Weights}
