@@ -1,0 +1,184 @@
+---
+title: "gwr_analysis"
+output: html_notebook
+---
+
+#Data Prep
+```{r Data Prepping}
+Candidate = "BERNIE"
+require(sp)
+
+library(sp)
+library(rgdal)
+library(RColorBrewer)
+library(spdep)
+library(lattice)
+library(latticeExtra)
+library(maptools)
+library(tmap)
+library(spgwr)
+
+#prevents lat long rounding
+options("scipen" = 100)
+setwd("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/GWR/GWR_Analysis")
+
+#reads in Countylayer
+co = readOGR(dsn = getwd(),layer = "NY_CNTY",integer64="warn.loss")
+df_co = data.frame(co)
+spdf_co = SpatialPolygonsDataFrame(co,df_co)
+
+d3 <- read.table("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3_310.csv",
+                 header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
+
+#Sorts etc
+sp = spdf_co[order(spdf_co$NAME), ]
+d3j = d3[order(d3$County), ]
+
+#THis is a dumb intermediate
+df1 <- data.frame(d3j[ which(d3j$CANDIDATE==Candidate), ])
+outvar = "C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3_310_subset.csv"
+write.csv(df1,outvar)
+
+
+df = read.table(outvar,header=TRUE, sep=",", na.strings="NA", dec=".",strip.white=TRUE)
+spdf_co2 = merge(sp,df,by=(intersect(by.x,by.y)),by.x = "NAME", by.y = "County")
+
+rural <- read.table("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/Data/ruralness/rural.csv",header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
+
+rural.df = rural[order(rural$County), ]
+spdf_co2$LogDens = log((spdf_co2$PopOver18/spdf_co2$ALAND10))
+spdf_co2 = merge(spdf_co2,rural.df,by=(intersect(by.x,by.y)),by.x = "NAME", by.y = "County")
+
+```
+
+These have all been subset, as such, they need to be tested one at a time.
+aka `sdf_d17` and `Candidate_TS17` and likewise for all the other ones. 
+
+```{r subsetting}
+#create Data Subsets
+sdf_d17 = subset(spdf_co2,spdf_co2$Candidate_TS17>0)
+sdf_d18 = subset(spdf_co2,spdf_co2$Candidate_TS18>0)
+sdf_d19b4 = subset(spdf_co2,spdf_co2$Candidate_TS19b4>0)
+sdf_all = subset(spdf_co2,spdf_co2$Candidate_TS19b4>0 & spdf_co2$Candidate_TS18>0 & spdf_co2$Candidate_TS17>0)
+
+sdf_allMetro = subset(spdf_co2,spdf_co2$Candidate_TS19b4>0 & spdf_co2$Candidate_TS18>0 & spdf_co2$Candidate_TS17>0 & spdf_co2$Metro == "Nonmetro")
+sdf_allRural = subset(spdf_co2,spdf_co2$Candidate_TS19b4>0 & spdf_co2$Candidate_TS18>0 & spdf_co2$Candidate_TS17>0)
+
+```
+
+
+# GWR Analysis
+http://isites.harvard.edu/fs/docs/icb.topic923307.files/gwr%20code%20for%20lab%20ex%207.txt
+This link shows how to do adaptive with bisquare - link no longer works
+
+GWR LINK:
+http://geokitchen.blogspot.com/2012/09/r-geographically-weighted-regression.html
+
+
+
+
+```{r gwr analysis}
+#tmap_mode(mode = "view")
+
+#Remove?
+GWRbandwidth <- gwr.sel(sdf_d17$Candidate_VS~sdf_d17$Candidate_TS17, data=sdf_d17,adapt=T)
+geow = gwr(sdf_d17$Candidate_VS~sdf_d17$Candidate_TS17,data=sdf_d17,adapt=GWRbandwidth, hatmatrix = TRUE, se.fit = TRUE)
+geow2 = gwr(sdf_d17$Candidate_VS~sdf_d17$Candidate_TS17,data=sdf_d17,bandwidth = 30)
+
+#Keep!!  Adaptive Bisquare
+
+adaptive.bw.bisqr = gwr.sel(sdf_d17$Candidate_VS~sdf_d17$Candidate_TS17, data=sdf_d17,adapt=T, gweight=gwr.bisquare, method = 'cv' )
+geow4 = gwr(sdf_d17$Candidate_VS~sdf_d17$Candidate_TS17,data=sdf_d17,adapt=adaptive.bw.bisqr, hatmatrix = TRUE, se.fit = TRUE, gweight=gwr.bisquare)
+summary(geow4$SDF@data)
+
+
+sdf = geow4$SDF
+sdf$sdf_d17.Candidate_TS17
+sdf$gwr.e
+sdf$pred
+sdf$sum.w
+sdf$pred.se
+sdf$pred.se
+sdf@data
+
+sdf$t = sdf$sdf_d17.Candidate_TS17/sdf$sdf_d17.Candidate_TS17_se
+geow
+#gwr(formula, data=list(), coords, bandwidth, gweight=gwr.Gauss,adapt=NULL, hatmatrix = FALSE, fit.points, longlat=NULL, se.fit=FALSE, weights, cl=NULL, predictions = FALSE, fittedGWRobject = NULL, se.fit.CCT = TRUE)
+
+tm_shape(sdf) + tm_polygons(style="quantile", col = "sdf_d17.Candidate_TS17") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(sdf) + tm_polygons(style="quantile", col = "localR2") +  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(sdf) +tm_fill(col = "t", breaks = c(-Inf, -1.96, 0, 1.96, Inf)) +  tm_legend(outside = TRUE, text.size = .8)
+
+```
+
+
+http://isites.harvard.edu/fs/docs/icb.topic923307.files/gwr%20code%20for%20lab%20ex%207.txt
+
+
+```{r gwr analysis2}
+#tmap_mode(mode = "view")
+#Keep!!  Adaptive Bisquare
+
+adaptive.bw.bisqr = gwr.sel(sdf_d18$Candidate_VS~sdf_d18$Candidate_TS18, data=sdf_d18,adapt=T, gweight=gwr.bisquare, method = 'cv' )
+geow4 = gwr(sdf_d18$Candidate_VS~sdf_d18$Candidate_TS18,data=sdf_d18,adapt=adaptive.bw.bisqr, hatmatrix = TRUE, se.fit = TRUE, gweight=gwr.bisquare)
+summary(geow4$SDF@data)
+
+
+sdf = geow4$SDF
+sdf$gwr.e
+sdf$pred
+sdf$sum.w
+sdf$pred.se
+sdf$pred.se
+sdf@data
+
+sdf$t = sdf$sdf_d18.Candidate_TS18/sdf$sdf_d18.Candidate_TS18_se
+geow
+#gwr(formula, data=list(), coords, bandwidth, gweight=gwr.Gauss,adapt=NULL, hatmatrix = FALSE, fit.points, longlat=NULL, se.fit=FALSE, weights, cl=NULL, predictions = FALSE, fittedGWRobject = NULL, se.fit.CCT = TRUE)
+
+tm_shape(sdf) + tm_polygons(style="quantile", col = "sdf_d18.Candidate_TS18") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(sdf) + tm_polygons(style="quantile", col = "localR2") +  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(sdf) +tm_fill(col = "t", breaks = c(-Inf, -1.96, 0, 1.96, Inf)) +  tm_legend(outside = TRUE, text.size = .8)
+
+```
+
+
+
+```{r gwr analysis3}
+#tmap_mode(mode = "view")
+
+#Keep!!  Adaptive Bisquare
+
+adaptive.bw.bisqr = gwr.sel(sdf_d19b4$Candidate_VS~sdf_d19b4$Candidate_TS19b4, data=sdf_d19b4,adapt=T, gweight=gwr.bisquare, method = 'cv' )
+geow4 = gwr(sdf_d19b4$Candidate_VS~sdf_d19b4$Candidate_TS19b4,data=sdf_d19b4,adapt=adaptive.bw.bisqr, hatmatrix = TRUE, se.fit = TRUE, gweight=gwr.bisquare)
+summary(geow4$SDF@data)
+
+
+sdf = geow4$SDF
+sdf$gwr.e
+sdf$pred
+sdf$sum.w
+sdf$pred.se
+sdf$pred.se
+sdf@data
+
+sdf$t = sdf$sdf_d19b4.Candidate_TS19b4/sdf$sdf_d19b4.Candidate_TS19b4_se
+geow
+#gwr(formula, data=list(), coords, bandwidth, gweight=gwr.Gauss,adapt=NULL, hatmatrix = FALSE, fit.points, longlat=NULL, se.fit=FALSE, weights, cl=NULL, predictions = FALSE, fittedGWRobject = NULL, se.fit.CCT = TRUE)
+
+tm_shape(sdf) + tm_polygons(style="quantile", col = "sdf_d19b4.Candidate_TS19b4") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(sdf) + tm_polygons(style="quantile", col = "localR2") +  tm_legend(outside = TRUE, text.size = .8)
+
+tm_shape(sdf) +tm_fill(col = "t", breaks = c(-Inf, -1.96, 0, 1.96, Inf)) +  tm_legend(outside = TRUE, text.size = .8)
+
+```
+
+

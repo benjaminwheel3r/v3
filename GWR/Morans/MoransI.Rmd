@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Set-UP
-```{r}
+```{r Set-up and Do Once}
 x = "C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3.csv"
 
 getwd()
@@ -34,7 +34,6 @@ sl3 = list('sp.polygons', co, col="grey")
 spdf_co = SpatialPolygonsDataFrame(co,df_co)
 
 
-View(spdf_co2@data)
 spdf_data <- read.table(x,
                  header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
 spdf_co2 <- merge(spdf_co, spdf_data, by.x = "NAME", by.y = "County")
@@ -53,7 +52,8 @@ nb_snap <- poly2nb(spdf_co2,
 # Morans I Estimator
 Update `input` with the correct Variable in the shapefile will allow one-stop shopping for Moran's I.
 ```{r Calculating MoransI}
-input = spdf_co2$Hillary_VS
+input = spdf_co2$Trump_TS
+xCan = "Trump_TS"
 
 lw = nb2listw(nb, style="W", zero.policy = TRUE)
 Pop.lag = lag.listw(lw, input)
@@ -93,8 +93,11 @@ moran.test(input,lw)
 
 
 
-'tmap_mode(mode = "view")
+tmap_mode(mode = "view")
+tmap_mode(mode = "plot")
 par(mfrow=c(1,2))
+tm_shape(spdf_co2) + tm_polygons(style="quantile", col = xCan) +
+  tm_legend(outside = TRUE, text.size = .8)
 tm_shape(spdf_co2) + tm_polygons(style="quantile", col = "predict") +
   tm_legend(outside = TRUE, text.size = .8)
 
