@@ -13,12 +13,18 @@ options("scipen" = 100)
 x ='C:/Temp/FINAL_INPUTS/Box Sync/R/v4'
 setwd(x)
 
-d3 <- read.table(paste(getwd()[1],"v3_AllTags_002_AllSources_analysis_v3_310.csv",sep = '/'),
+d3 <- read.table(paste(getwd()[1],"v3_AllTags_002_AllSources_analysis_v3_310_noNA.txt",sep = '/'),
                  header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
 ```
 ```{r subset data}
 d3$PopDens <- log(d3$TotPop/d3$SqMiles)
-d3$PopDens <- log(d3$TotPop/d3$SqMiles)
+d3$perc_white_comb <- d3$White_and_combination/d3$TotPop
+d3$perc_white <- d3$White_only/d3$TotPop
+View(d3$perc_white)
+
+plot(d3$Candidate_VS~d3$perc_white_comb)
+plot(d3$Candidate_VS~d3$perc_white)
+
 
 RepTKC <- subset(d3,d3$CANDIDATE == 'TRUMP' | d3$CANDIDATE == 'KASICH' | d3$CANDIDATE == 'CRUZ')
 RepTK  <- subset(d3,d3$CANDIDATE == 'TRUMP'  | d3$CANDIDATE == 'KASICH')
@@ -47,7 +53,6 @@ summary(lm(formula = RepTKC$Candidate_VS ~ RepTKC$Candidate_TS18 + RepTKC$Candid
 ```{r}
 RegModel.Model <- lm(RepTKC$Candidate_VS~RepTKC$PopDens+RepTKC$Candidate_TS+RepTKC$Candidate_TS17+RepTKC$Candidate_TS18+RepTKC$Candidate_TS19b4+RepTKC$Candidate_TS19aft_u+RepTKC$Candidate_TS_b4+RepTKC$Perc_BachelorsDeg_and_higher+RepTKC$White_and_combination, data=na.omit(RepTKC))
 summary(RegModel.Model)
-
 ```
 ```{r}
 step(RegModel.Model)
@@ -92,6 +97,10 @@ step(RegModel.Model)
 ```{r}
 RegModel.Model <- lm(RepTKC$Candidate_VS~RepTKC$PopDens+RepTKC$Candidate_TS+RepTKC$Candidate_TS17+RepTKC$Candidate_TS18+sqrt(RepTKC$Candidate_TS19b4)+RepTKC$Candidate_TS19aft_u+RepTKC$Candidate_TS_b4+RepTKC$Perc_BachelorsDeg_and_higher+RepTKC$White_and_combination, data=na.omit(RepTKC))
 
-plot(RepTKC$Candidate_VS~RepTKC$Candidate_TS_b4)
+plot(RepTKC$Candidate_VS~)
+
+
+
+RepTKC$White_and_combination
 ```
 

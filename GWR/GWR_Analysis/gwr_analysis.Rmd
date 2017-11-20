@@ -29,7 +29,6 @@ spdf_co = SpatialPolygonsDataFrame(co,df_co)
 
 d3 <- read.table("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3_310.csv",
                  header=TRUE, sep=",", na.strings="0", dec=".", strip.white=TRUE)
-d3[is.na(d3)] <- 0
 
 #Sorts etc
 sp = spdf_co[order(spdf_co$NAME), ]
@@ -38,13 +37,13 @@ d3j = d3[order(d3$County), ]
 #THis is a dumb intermediate
 df1 <- data.frame(d3j[ which(d3j$CANDIDATE==Candidate), ])
 outvar = "C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3_310_subset.csv"
-write.csv(df1,outvar,na="0")
+write.csv(df1,outvar,na="NA")
 
 
 df = read.table(outvar,header=TRUE, sep=",", na.strings=0, dec=".",strip.white=TRUE)
 spdf_co2 = merge(sp,df,by=(intersect(by.x,by.y)),by.x = "NAME", by.y = "County")
 
-rural <- read.table("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/Data/ruralness/rural.csv",header=TRUE, sep=",", na.strings="0",na. dec=".", strip.white=TRUE)
+rural <- read.table("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/Data/ruralness/rural.csv",header=TRUE, sep=",", na.strings="NA",na.dec=".", strip.white=TRUE)
 
 rural.df = rural[order(rural$County), ]
 spdf_co2$LogDens = log((spdf_co2$PopOver18/spdf_co2$ALAND10))
