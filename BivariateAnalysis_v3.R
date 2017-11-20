@@ -83,7 +83,7 @@ d3$Kasich_TS_b4 <- d3$BeforeElectionCalled_Kasich / (d3$BeforeElectionCalled_Cru
 #writes output intermediate File
 write.csv(d3,paste(getwd()[1],"v3_AllTags_002_AllSources_analysis_v3.csv",sep = '/'),
           append = FALSE, quote = TRUE, sep = ",",
-          eol = "\n", na = "NA", dec = ".", row.names = TRUE,
+          eol = "\n", na = "0", dec = ".", row.names = TRUE,
           col.names = TRUE, qmethod = c("escape", "double"),
           fileEncoding = "")
 
@@ -151,7 +151,7 @@ d4 <- rbind(T,K,C,H,B)
 
 write.csv(d4,paste(getwd()[1],"v3_AllTags_002_AllSources_analysis_v3_310.csv",sep = '/'),
           append = FALSE, quote = TRUE, sep = ",",
-          eol = "\n", na = "NA", dec = ".", row.names = TRUE, 
+          eol = "\n", na = "0", dec = ".", row.names = TRUE, 
           col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "")
 
 # This section grabs a random sample from my set of 310 to check correlation.
