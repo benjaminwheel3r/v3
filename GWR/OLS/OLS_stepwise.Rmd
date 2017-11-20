@@ -1,0 +1,94 @@
+---
+title: "OLS Model"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+options("scipen" = 100)
+
+x ='C:/Temp/FINAL_INPUTS/Box Sync/R/v4'
+setwd(x)
+
+d3 <- read.table(paste(getwd()[1],"v3_AllTags_002_AllSources_analysis_v3_310.csv",sep = '/'),
+                 header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
+```
+```{r subset data}
+d3$PopDens <- log(d3$TotPop/d3$SqMiles)
+d3$PopDens <- log(d3$TotPop/d3$SqMiles)
+
+RepTKC <- subset(d3,d3$CANDIDATE == 'TRUMP' | d3$CANDIDATE == 'KASICH' | d3$CANDIDATE == 'CRUZ')
+RepTK  <- subset(d3,d3$CANDIDATE == 'TRUMP'  | d3$CANDIDATE == 'KASICH')
+RepCK  <- subset(d3,d3$CANDIDATE == 'KASICH' | d3$CANDIDATE == 'CRUZ')
+RepTC  <- subset(d3,d3$CANDIDATE == 'TRUMP'  | d3$CANDIDATE == 'CRUZ')
+
+RepT <- subset(d3,d3$CANDIDATE == 'TRUMP')
+RepK <- subset(d3,d3$CANDIDATE == 'KASICH')
+RepC <- subset(d3,d3$CANDIDATE == 'CRUZ')
+
+```
+
+```{r}
+plot(RepTKC$Candidate_VS~RepTKC$Candidate_TS19b4)
+plot(RepTKC$Candidate_VS~ log(RepTKC$PopOver18/RepTKC$SqMiles))
+plot(RepT$Candidate_VS~ log(RepT$TotPop/RepT$SqMiles))
+plot(RepT$Candidate_VS~ RepT$PopDens)
+```
+
+
+```{r}
+RegModel.Model <- lm(RepTKC$Candidate_VS~RepTKC$PopDens+RepTKC$Candidate_TS+RepTKC$Candidate_TS17+RepTKC$Candidate_TS18+RepTKC$Candidate_TS19b4+RepTKC$Candidate_TS19aft_u+RepTKC$Candidate_TS_b4+RepTKC$Perc_BachelorsDeg_and_higher+RepTKC$White_and_combination, data=na.omit(RepTKC))
+summary(RegModel.Model)
+
+```
+```{r}
+step(RegModel.Model)
+```
+
+
+```{r}
+RegModel.Model <- lm(d3$Candidate_VS~d3$PopDens+d3$Candidate_TS+d3$Candidate_TS17+d3$Candidate_TS18+d3$Candidate_TS19b4+d3$Candidate_TS19aft_u+d3$Candidate_TS_b4+d3$Perc_BachelorsDeg_and_higher+d3$White_and_combination, data=d3)
+summary(RegModel.Model)
+
+```
+
+
+```{r}
+step(RegModel.Model)
+```
+
+INTERESTING BECAUSE AACH CANDIDATE PERFORMS DIFFERENTLY WITH THE DIFFERENT VARIABLES.
+```{r}
+RegModel.Model <- lm(RepT$Candidate_VS~ RepT$PopDens, data=RepT)
+summary(RegModel.Model)
+
+RegModel.Model <- lm(RepK$Candidate_VS~ RepK$PopDens, data=RepK)
+summary(RegModel.Model)
+
+RegModel.Model <- lm(RepC$Candidate_VS~ RepC$PopDens, data=RepC)
+summary(RegModel.Model)
+
+
+summary(lm(formula = RepTKC$Candidate_VS ~ RepTKC$Candidate_TS_b4, data = na.omit(RepTKC)))
+summary(lm(formula = RepTKC$Candidate_VS ~ RepTKC$Candidate_TS18 + RepTKC$Candidate_TS19b4, 
+    data = na.omit(RepTKC)))
+
+```
+
+
+
+```{r}
+RegModel.Model <- lm(RepTKC$Candidate_VS~RepTKC$PopDens+RepTKC$Candidate_TS17+RepTKC$Candidate_TS18+RepTKC$Candidate_TS19b4+RepTKC$Candidate_TS_b4+RepTKC$Perc_BachelorsDeg_and_higher+RepTKC$White_and_combination, data=na.omit(RepTKC))
+summary(RegModel.Model)
+
+step(RegModel.Model)
+```
+```{r}
+RegModel.Model <- lm(RepTKC$Candidate_VS~RepTKC$PopDens+RepTKC$Candidate_TS+RepTKC$Candidate_TS17+RepTKC$Candidate_TS18+sqrt(RepTKC$Candidate_TS19b4)+RepTKC$Candidate_TS19aft_u+RepTKC$Candidate_TS_b4+RepTKC$Perc_BachelorsDeg_and_higher+RepTKC$White_and_combination, data=na.omit(RepTKC))
+
+plot(RepTKC$Candidate_VS~RepTKC$Candidate_TS_b4)
+```
+
