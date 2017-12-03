@@ -59,7 +59,7 @@ numVars = length(InDeVar)
 sorted.models <- GWmodel::gwr.model.sort(model.list,numVars = numVars, ruler.vector = ruler.vector)
 
 model.list[[2]] <- sorted.models[[1]]
-gwr.model.view(DeVar, InDeVars, sorted.models)  # this needs a vector or a list with two different kinds...
+gwr.model.view(DeVar, InDeVars, sorted.models)
 
 
 ```
