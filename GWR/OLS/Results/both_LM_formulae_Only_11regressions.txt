@@ -1,0 +1,28 @@
+[1] "d3"
+dfor$Candidate_VS ~ dfor$Candidate_TS17 + dfor$Candidate_TS18 + 
+    dfor$Candidate_TS19b4
+[1] "RepTKC"
+dfor$Candidate_VS ~ dfor$Candidate_TS18 + dfor$Candidate_TS19b4
+[1] "RepTC"
+dfor$Candidate_VS ~ dfor$Candidate_TS17 + dfor$Candidate_TS18 + 
+    dfor$Candidate_TS19b4
+[1] "RepCK"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$Candidate_TS17 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4 + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$MedianAge_Total + dfor$perc_Fem
+[1] "RepTK"
+dfor$Candidate_VS ~ dfor$Candidate_TS19b4 + dfor$Candidate_TS_b4
+[1] "RepT"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$MedianAge_Total + dfor$perc_Fem
+[1] "RepK"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Perc_BachelorsDeg_and_higher
+[1] "RepC"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$MedianAge_Total + dfor$perc_Fem
+[1] "DemHB"
+dfor$Candidate_VS ~ dfor$Candidate_TS19b4 + dfor$Candidate_TS_b4
+[1] "DemH"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$Candidate_TS_b4 + dfor$perc_Fem
+[1] "DemB"
+dfor$Candidate_VS ~ dfor$Candidate_TS19b4 + dfor$Candidate_TS_b4

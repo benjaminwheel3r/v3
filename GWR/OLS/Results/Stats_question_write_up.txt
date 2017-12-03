@@ -1,0 +1,48 @@
+[109] "Kasich_TS_b4"                110 "Candidate_VS"                111  "Candidate_TS17"              
+[112] "Candidate_TS18"              113 "Candidate_TS19b4"            114  "Candidate_TS19aft_u"         
+[115] "Candidate_TS20"              116 "Candidate_TS_b4"             117  "Candidate_TS"                
+[118] "CANDIDATE"   
+
+
+
+Why would step() output different outcomes when a better fit can be produced.
+I have two datasets model that in my understanding should have the same relationships with a set of variables.
+IE some of the independent variables used in each are as such (data4a <- 1- data4b),
+and the dependent variable for CaseA has the same relationship to the dependent variable for CaseB. 
+
+#These data are the same for CaseA and CaseB:
+df$data1 <- log(explanatory variable)
+df$data2 <- explanatory variable
+df$data3 <- explanatory variable #(between 0 and 1)
+
+#These data are related to the Case, IE CaseA or CaseB.
+df$data4a <- measured value #(between 0 and 1)
+df$data4b <- 1 - df$data4a  #(between 0 and 1)
+df$data5a <- measured value #(between 0 and 1)
+df$data5b <- 1 - df$data5a  #(between 0 and 1)
+
+
+df$perc_a <- measured value #(between 0 and 1)
+dfb$perc_b <- 1 - df$perc_a  #(between 0 and 1)
+
+ModelA <- lm(perc_a~df$data4a+df$data5a+df$data1+df$data2+df$data3,data=df)
+ModelB <- lm(perc_b~df$data4b+df$data5b+df$data1+df$data2+df$data3,data=df)
+
+stepA <- step(ModelA)
+stepB <- step(ModelB)
+
+stepA$call$formula
+RETURNS: 
+perc_a~df$data4a+df$data1+df$data3
+
+stepB$call$formula
+RETURNS:
+perc_b~df$data4b+df$data5b
+
+
+stepA: outcome is a model with a 0.73 adjusted R^2.
+stepB: outcome is a model with a 0.05 R^2.
+
+If I plug in the same formula that comes out of StepA, I get a .73 R^2, so the relationships is still the same.
+I understand why they get the same R^2 under the same equation, but I don't understand why they aren't producing the same outcomes within step().
+ 

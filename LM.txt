@@ -1,0 +1,261 @@
+[1] "d3"
+dfor$Candidate_VS ~ dfor$Candidate_TS17 + dfor$Candidate_TS18 + 
+    dfor$Candidate_TS19b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.36318 -0.07599 -0.00139  0.08591  0.36852 
+
+Coefficients:
+                      Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)            0.23136    0.01262  18.334 < 0.0000000000000002 ***
+dfor$Candidate_TS17    0.04564    0.03207   1.423              0.15569    
+dfor$Candidate_TS18    0.11316    0.03557   3.181              0.00162 ** 
+dfor$Candidate_TS19b4  0.26738    0.03177   8.416  0.00000000000000152 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1253 on 306 degrees of freedom
+Multiple R-squared:  0.4722,	Adjusted R-squared:  0.467 
+F-statistic: 91.26 on 3 and 306 DF,  p-value: < 0.00000000000000022
+
+[1] "RepTKC"
+dfor$Candidate_VS ~ dfor$Candidate_TS18 + dfor$Candidate_TS19b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.36347 -0.07193 -0.00390  0.08060  0.29710 
+
+Coefficients:
+                      Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)            0.19042    0.01247  15.269 < 0.0000000000000002 ***
+dfor$Candidate_TS18    0.16578    0.05262   3.151               0.0019 ** 
+dfor$Candidate_TS19b4  0.26297    0.05068   5.189          0.000000557 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1166 on 183 degrees of freedom
+Multiple R-squared:  0.5796,	Adjusted R-squared:  0.575 
+F-statistic: 126.1 on 2 and 183 DF,  p-value: < 0.00000000000000022
+
+[1] "RepTC"
+dfor$Candidate_VS ~ dfor$Candidate_TS17 + dfor$Candidate_TS18 + 
+    dfor$Candidate_TS19b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.31466 -0.07256 -0.01121  0.06706  0.28673 
+
+Coefficients:
+                      Estimate Std. Error t value    Pr(>|t|)    
+(Intercept)            0.09732    0.02112   4.609 0.000010182 ***
+dfor$Candidate_TS17    0.09139    0.04865   1.878      0.0627 .  
+dfor$Candidate_TS18    0.17401    0.06630   2.625      0.0098 ** 
+dfor$Candidate_TS19b4  0.31111    0.06005   5.181 0.000000903 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1216 on 120 degrees of freedom
+Multiple R-squared:  0.6595,	Adjusted R-squared:  0.6509 
+F-statistic: 77.46 on 3 and 120 DF,  p-value: < 0.00000000000000022
+
+[1] "RepCK"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$MedianAge_Total + dfor$perc_Fem + dfor$Candidate_TS17 + 
+    dfor$Candidate_TS19b4 + dfor$Candidate_TS_b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.104972 -0.039397 -0.005532  0.035528  0.237507 
+
+Coefficients:
+                                    Estimate Std. Error t value   Pr(>|t|)    
+(Intercept)                        0.1499615  0.1950383   0.769    0.44353    
+dfor$PopDens                      -0.0230572  0.0046227  -4.988 0.00000216 ***
+dfor$Perc_BachelorsDeg_and_higher  0.0021512  0.0007655   2.810    0.00581 ** 
+dfor$MedianAge_Total              -0.0047892  0.0020135  -2.379    0.01901 *  
+dfor$perc_Fem                      0.6904898  0.3822886   1.806    0.07348 .  
+dfor$Candidate_TS17               -0.0888322  0.0367603  -2.417    0.01723 *  
+dfor$Candidate_TS19b4             -0.2008659  0.0665463  -3.018    0.00312 ** 
+dfor$Candidate_TS_b4               0.1255716  0.0810318   1.550    0.12395    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.0592 on 116 degrees of freedom
+Multiple R-squared:  0.2949,	Adjusted R-squared:  0.2524 
+F-statistic: 6.932 on 7 and 116 DF,  p-value: 0.000000684
+
+[1] "RepTK"
+dfor$Candidate_VS ~ dfor$Candidate_TS19b4 + dfor$Candidate_TS_b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.168789 -0.063773 -0.005449  0.053184  0.228421 
+
+Coefficients:
+                      Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)            0.25902    0.01155  22.419 < 0.0000000000000002 ***
+dfor$Candidate_TS19b4  0.19635    0.07128   2.755              0.00678 ** 
+dfor$Candidate_TS_b4   0.20054    0.07494   2.676              0.00848 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.08708 on 121 degrees of freedom
+Multiple R-squared:  0.7351,	Adjusted R-squared:  0.7307 
+F-statistic: 167.9 on 2 and 121 DF,  p-value: < 0.00000000000000022
+
+[1] "RepT"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$MedianAge_Total + dfor$perc_Fem
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.188495 -0.044017 -0.008408  0.037533  0.157220 
+
+Coefficients:
+                                   Estimate Std. Error t value   Pr(>|t|)    
+(Intercept)                        0.752180   0.317544   2.369    0.02126 *  
+dfor$PopDens                       0.041509   0.007579   5.477 0.00000102 ***
+dfor$Perc_BachelorsDeg_and_higher -0.003863   0.001247  -3.098    0.00302 ** 
+dfor$MedianAge_Total               0.008375   0.003271   2.560    0.01313 *  
+dfor$perc_Fem                     -1.273998   0.625634  -2.036    0.04637 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.06907 on 57 degrees of freedom
+Multiple R-squared:  0.3533,	Adjusted R-squared:  0.308 
+F-statistic: 7.786 on 4 and 57 DF,  p-value: 0.00004451
+
+[1] "RepK"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$Candidate_TS18 + dfor$Candidate_TS19b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.117180 -0.029250  0.000549  0.033657  0.159784 
+
+Coefficients:
+                                    Estimate Std. Error t value            Pr(>|t|)    
+(Intercept)                        0.2441084  0.0231866  10.528 0.00000000000000551 ***
+dfor$PopDens                      -0.0190600  0.0045745  -4.167            0.000106 ***
+dfor$Perc_BachelorsDeg_and_higher  0.0043882  0.0009527   4.606 0.00002349164989089 ***
+dfor$Candidate_TS18                0.1756077  0.0693716   2.531            0.014143 *  
+dfor$Candidate_TS19b4             -0.2320209  0.1526674  -1.520            0.134094    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.05263 on 57 degrees of freedom
+Multiple R-squared:  0.3522,	Adjusted R-squared:  0.3068 
+F-statistic: 7.748 on 4 and 57 DF,  p-value: 0.00004663
+
+[1] "RepC"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$MedianAge_Total + dfor$perc_Fem
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.073772 -0.025153  0.000107  0.022907  0.063480 
+
+Coefficients:
+                      Estimate Std. Error t value  Pr(>|t|)    
+(Intercept)           0.078929   0.150092   0.526    0.6010    
+dfor$PopDens         -0.015910   0.003330  -4.778 0.0000125 ***
+dfor$MedianAge_Total -0.004123   0.001560  -2.643    0.0106 *  
+dfor$perc_Fem         0.682444   0.293417   2.326    0.0235 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.03295 on 58 degrees of freedom
+Multiple R-squared:  0.2864,	Adjusted R-squared:  0.2495 
+F-statistic: 7.759 on 3 and 58 DF,  p-value: 0.0001928
+
+[1] "DemHB"
+dfor$Candidate_VS ~ dfor$Candidate_TS19b4 + dfor$Candidate_TS_b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.23337 -0.05613  0.00000  0.05613  0.23337 
+
+Coefficients:
+                      Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)            0.50562    0.02738  18.467 < 0.0000000000000002 ***
+dfor$Candidate_TS19b4  0.13360    0.04596   2.907              0.00435 ** 
+dfor$Candidate_TS_b4  -0.14484    0.06635  -2.183              0.03098 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.09284 on 121 degrees of freedom
+Multiple R-squared:  0.06691,	Adjusted R-squared:  0.05149 
+F-statistic: 4.339 on 2 and 121 DF,  p-value: 0.01515
+
+[1] "DemH"
+dfor$Candidate_VS ~ dfor$PopDens + dfor$perc_Fem + dfor$Candidate_TS_b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.122686 -0.033500  0.004988  0.027602  0.113705 
+
+Coefficients:
+                      Estimate Std. Error t value         Pr(>|t|)    
+(Intercept)          -0.196932   0.196586  -1.002           0.3206    
+dfor$PopDens          0.033310   0.003852   8.648 0.00000000000507 ***
+dfor$perc_Fem         0.879512   0.400892   2.194           0.0323 *  
+dfor$Candidate_TS_b4  0.056119   0.036103   1.554           0.1255    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.04389 on 58 degrees of freedom
+Multiple R-squared:  0.7513,	Adjusted R-squared:  0.7384 
+F-statistic:  58.4 on 3 and 58 DF,  p-value: < 0.00000000000000022
+
+[1] "DemB"
+dfor$Candidate_VS ~ dfor$Candidate_TS19b4 + dfor$Candidate_TS_b4
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.23337 -0.05613  0.00000  0.05613  0.23337 
+
+Coefficients:
+                      Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)            0.50562    0.02738  18.467 < 0.0000000000000002 ***
+dfor$Candidate_TS19b4  0.13360    0.04596   2.907              0.00435 ** 
+dfor$Candidate_TS_b4  -0.14484    0.06635  -2.183              0.03098 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.09284 on 121 degrees of freedom
+Multiple R-squared:  0.06691,	Adjusted R-squared:  0.05149 
+F-statistic: 4.339 on 2 and 121 DF,  p-value: 0.01515
+

@@ -46,29 +46,33 @@ strList<- list("d3","RepTKC","RepTC","RepCK","RepTK", "RepT","RepK","RepC", "Dem
 len <- 11
 outputs <- list()
 Formulae <- list()
+NoStep <- list()
 setwd(x)
 
 for (i in 1:len){
 dfor <- data.frame(DfList[i])
 RegModel.Model <- lm(dfor$Candidate_VS~
                        dfor$PopDens
+                    +dfor$Perc_BachelorsDeg_and_higher
+                     +dfor$perc_white
+                     +dfor$MedianAge_Total
+                     +dfor$perc_Fem
                      +dfor$Candidate_TS17
                      +dfor$Candidate_TS18
                      +dfor$Candidate_TS19b4
-                     +dfor$Candidate_TS_b4
-                     +dfor$Perc_BachelorsDeg_and_higher
-                     +dfor$perc_white
-                     +dfor$MedianAge_Total
-                     +dfor$perc_Fem, 
+                     +dfor$Candidate_TS_b4,
                      data=na.omit(dfor))
-obj <- step(RegModel.Model)
+obj <- step(RegModel.Model,direction="backward",trace=FALSE)
 TheChosenOne <- lm(obj$call$formula,data = dfor)
 outputs[[paste(strList[i])]] <- TheChosenOne
 Formulae[[paste(strList[i])]] <- obj$call$formula
+NoStep[[paste(strList[i])]] <- list(summary(RegModel.Model))
 }
 ```
 
-```{r, echo=TRUE}
+```{r}
+
+options("scipen" = 100)
 setwd(x)
 sink('LM.txt')
 for (i in 1:len)
@@ -87,10 +91,23 @@ for (i in 1:len)
   print(Formulae[[i]])
 }
 sink()
+
+sink('LM_formulae_Only_noSTEP.txt')
+for (i in 1:len)
+{
+  print(NoStep[[i]])
+}
+sink()
+
 ```
 
 ```{r}
 Bernie <- lm(DemB$Candidate_VS ~ DemB$PopDens + DemB$Candidate_TS_b4 + DemB$perc_Fem, data=DemB)
 summary(Bernie)
+```
+
+```{r}
+library(forecast)
+cvmod <- CV(Bernie)
 ```
 

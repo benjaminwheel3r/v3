@@ -1,0 +1,363 @@
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.37404 -0.07674 -0.00004  0.08474  0.36444 
+
+Coefficients:
+                                     Estimate  Std. Error t value Pr(>|t|)    
+(Intercept)                        0.26797369  0.27307020   0.981 0.327218    
+dfor$PopDens                       0.00027481  0.01042858   0.026 0.978994    
+dfor$Perc_BachelorsDeg_and_higher -0.00008987  0.00103866  -0.087 0.931107    
+dfor$perc_white                    0.00634234  0.11577254   0.055 0.956348    
+dfor$MedianAge_Total              -0.00029266  0.00270286  -0.108 0.913847    
+dfor$perc_Fem                     -0.05886093  0.52131163  -0.113 0.910178    
+dfor$Candidate_TS17                0.03198810  0.04066092   0.787 0.432076    
+dfor$Candidate_TS18                0.09147053  0.05366929   1.704 0.089354 .  
+dfor$Candidate_TS19b4              0.23718111  0.06223018   3.811 0.000168 ***
+dfor$Candidate_TS_b4               0.06570302  0.11760446   0.559 0.576798    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1264 on 300 degrees of freedom
+Multiple R-squared:  0.4729,	Adjusted R-squared:  0.4571 
+F-statistic: 29.91 on 9 and 300 DF,  p-value: < 0.00000000000000022
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.33039 -0.07331 -0.00490  0.08290  0.27122 
+
+Coefficients:
+                                                  Estimate               Std. Error t value Pr(>|t|)
+(Intercept)                        0.188816006113293327617  0.329895002976448636911   0.572  0.56781
+dfor$PopDens                       0.000000000000000064528  0.012633042255087873276   0.000  1.00000
+dfor$Perc_BachelorsDeg_and_higher -0.000000000000000001524  0.001256733109687212767   0.000  1.00000
+dfor$perc_white                    0.000000000000000451419  0.140193018779580513833   0.000  1.00000
+dfor$MedianAge_Total               0.000000000000000004469  0.003268057849754493760   0.000  1.00000
+dfor$perc_Fem                     -0.000000000000003288734  0.630342964408522998809   0.000  1.00000
+dfor$Candidate_TS17                0.045504660398087322382  0.059893131622106882128   0.760  0.44841
+dfor$Candidate_TS18                0.199528638817673936723  0.119763323023920661980   1.666  0.09749
+dfor$Candidate_TS19b4              0.296721590835056170388  0.104741710149224342974   2.833  0.00515
+dfor$Candidate_TS_b4              -0.108202908390696295182  0.232018158984421435376  -0.466  0.64154
+                                    
+(Intercept)                         
+dfor$PopDens                        
+dfor$Perc_BachelorsDeg_and_higher   
+dfor$perc_white                     
+dfor$MedianAge_Total                
+dfor$perc_Fem                       
+dfor$Candidate_TS17                 
+dfor$Candidate_TS18               . 
+dfor$Candidate_TS19b4             **
+dfor$Candidate_TS_b4                
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1187 on 176 degrees of freedom
+Multiple R-squared:  0.581,	Adjusted R-squared:  0.5595 
+F-statistic: 27.11 on 9 and 176 DF,  p-value: < 0.00000000000000022
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.30098 -0.07199 -0.01109  0.05890  0.27980 
+
+Coefficients:
+                                    Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                        0.1950845  0.4212935   0.463  0.64420   
+dfor$PopDens                       0.0010602  0.0161306   0.066  0.94771   
+dfor$Perc_BachelorsDeg_and_higher -0.0017150  0.0016051  -1.068  0.28757   
+dfor$perc_white                   -0.0593645  0.1789145  -0.332  0.74065   
+dfor$MedianAge_Total              -0.0006885  0.0041846  -0.165  0.86960   
+dfor$perc_Fem                      0.0386172  0.8053404   0.048  0.96184   
+dfor$Candidate_TS17                0.1262773  0.0672646   1.877  0.06303 . 
+dfor$Candidate_TS18                0.2549717  0.1328329   1.919  0.05742 . 
+dfor$Candidate_TS19b4              0.3823537  0.1185616   3.225  0.00164 **
+dfor$Candidate_TS_b4              -0.1842136  0.2574965  -0.715  0.47582   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1236 on 114 degrees of freedom
+Multiple R-squared:  0.6655,	Adjusted R-squared:  0.6391 
+F-statistic:  25.2 on 9 and 114 DF,  p-value: < 0.00000000000000022
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.104150 -0.042161 -0.004593  0.037878  0.236874 
+
+Coefficients:
+                                    Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                        0.1411503  0.2062026   0.685  0.49503   
+dfor$PopDens                      -0.0216459  0.0078107  -2.771  0.00652 **
+dfor$Perc_BachelorsDeg_and_higher  0.0021147  0.0007847   2.695  0.00811 **
+dfor$perc_white                    0.0198515  0.0864757   0.230  0.81884   
+dfor$MedianAge_Total              -0.0049095  0.0020564  -2.387  0.01861 * 
+dfor$perc_Fem                      0.6696976  0.3917550   1.709  0.09008 . 
+dfor$Candidate_TS17               -0.0822810  0.0426108  -1.931  0.05597 . 
+dfor$Candidate_TS18                0.0256040  0.0857606   0.299  0.76583   
+dfor$Candidate_TS19b4             -0.1841005  0.0861522  -2.137  0.03474 * 
+dfor$Candidate_TS_b4               0.0795060  0.1722536   0.462  0.64527   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.05969 on 114 degrees of freedom
+Multiple R-squared:  0.2958,	Adjusted R-squared:  0.2402 
+F-statistic: 5.321 on 9 and 114 DF,  p-value: 0.000004676
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.195566 -0.060700 -0.004651  0.053009  0.228237 
+
+Coefficients:
+                                    Estimate Std. Error t value Pr(>|t|)  
+(Intercept)                        0.2651292  0.3084200   0.860   0.3918  
+dfor$PopDens                       0.0076619  0.0116250   0.659   0.5112  
+dfor$Perc_BachelorsDeg_and_higher  0.0001074  0.0011621   0.092   0.9265  
+dfor$perc_white                    0.0104108  0.1289572   0.081   0.9358  
+dfor$MedianAge_Total               0.0015998  0.0030261   0.529   0.5981  
+dfor$perc_Fem                     -0.2444383  0.5865109  -0.417   0.6776  
+dfor$Candidate_TS17                0.0063115  0.0588404   0.107   0.9148  
+dfor$Candidate_TS18                0.0454594  0.1184202   0.384   0.7018  
+dfor$Candidate_TS19b4              0.2186730  0.0963948   2.269   0.0252 *
+dfor$Candidate_TS_b4               0.1276946  0.2225785   0.574   0.5673  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.08911 on 114 degrees of freedom
+Multiple R-squared:  0.7387,	Adjusted R-squared:  0.718 
+F-statistic:  35.8 on 9 and 114 DF,  p-value: < 0.00000000000000022
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.18108 -0.03826 -0.01070  0.04031  0.16446 
+
+Coefficients:
+                                   Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                        0.803514   0.350811   2.290  0.02608 * 
+dfor$PopDens                       0.037932   0.013119   2.891  0.00559 **
+dfor$Perc_BachelorsDeg_and_higher -0.003974   0.001318  -3.015  0.00397 **
+dfor$perc_white                   -0.051452   0.144128  -0.357  0.72255   
+dfor$MedianAge_Total               0.007908   0.003526   2.242  0.02922 * 
+dfor$perc_Fem                     -1.171261   0.660500  -1.773  0.08204 . 
+dfor$Candidate_TS17               -0.080004   0.054066  -1.480  0.14497   
+dfor$Candidate_TS18               -0.059936   0.105789  -0.567  0.57345   
+dfor$Candidate_TS19b4             -0.126812   0.094331  -1.344  0.18468   
+dfor$Candidate_TS_b4               0.241482   0.197388   1.223  0.22670   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.07023 on 52 degrees of freedom
+Multiple R-squared:  0.3901,	Adjusted R-squared:  0.2845 
+F-statistic: 3.695 on 9 and 52 DF,  p-value: 0.001229
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.108207 -0.034418  0.002218  0.029847  0.174120 
+
+Coefficients:
+                                   Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                        0.054852   0.258394   0.212 0.832716    
+dfor$PopDens                      -0.021700   0.010242  -2.119 0.038908 *  
+dfor$Perc_BachelorsDeg_and_higher  0.003969   0.001022   3.883 0.000293 ***
+dfor$perc_white                    0.070015   0.109803   0.638 0.526506    
+dfor$MedianAge_Total              -0.003999   0.002640  -1.514 0.135958    
+dfor$perc_Fem                      0.624287   0.507678   1.230 0.224348    
+dfor$Candidate_TS17               -0.039847   0.085996  -0.463 0.645039    
+dfor$Candidate_TS18                0.214751   0.168049   1.278 0.206959    
+dfor$Candidate_TS19b4             -0.201944   0.200639  -1.007 0.318832    
+dfor$Candidate_TS_b4              -0.059504   0.313972  -0.190 0.850423    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.05303 on 52 degrees of freedom
+Multiple R-squared:  0.4001,	Adjusted R-squared:  0.2963 
+F-statistic: 3.854 on 9 and 52 DF,  p-value: 0.0008634
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.055874 -0.028836  0.004344  0.020290  0.062844 
+
+Coefficients:
+                                    Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                        0.1617836  0.1702956   0.950  0.34650   
+dfor$PopDens                      -0.0170940  0.0062187  -2.749  0.00820 **
+dfor$Perc_BachelorsDeg_and_higher -0.0003551  0.0006324  -0.562  0.57684   
+dfor$perc_white                   -0.0305877  0.0688891  -0.444  0.65888   
+dfor$MedianAge_Total              -0.0044688  0.0016436  -2.719  0.00888 **
+dfor$perc_Fem                      0.6399910  0.3201875   1.999  0.05087 . 
+dfor$Candidate_TS17                0.0050202  0.0288955   0.174  0.86275   
+dfor$Candidate_TS18                0.0230528  0.0580669   0.397  0.69299   
+dfor$Candidate_TS19b4              0.0742833  0.0596734   1.245  0.21878   
+dfor$Candidate_TS_b4              -0.1243452  0.1159020  -1.073  0.28829   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.03363 on 52 degrees of freedom
+Multiple R-squared:  0.3334,	Adjusted R-squared:  0.218 
+F-statistic:  2.89 on 9 and 52 DF,  p-value: 0.00759
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.234669 -0.059797 -0.000983  0.058272  0.227179 
+
+Coefficients:
+                                     Estimate  Std. Error t value Pr(>|t|)   
+(Intercept)                        0.54292845  0.32787395   1.656  0.10049   
+dfor$PopDens                       0.00027388  0.01243712   0.022  0.98247   
+dfor$Perc_BachelorsDeg_and_higher -0.00009652  0.00124271  -0.078  0.93823   
+dfor$perc_white                    0.00674078  0.13820593   0.049  0.96119   
+dfor$MedianAge_Total              -0.00034198  0.00323625  -0.106  0.91603   
+dfor$perc_Fem                     -0.06522464  0.62440830  -0.104  0.91699   
+dfor$Candidate_TS17                0.01130523  0.04328186   0.261  0.79441   
+dfor$Candidate_TS18                0.04239067  0.04627572   0.916  0.36158   
+dfor$Candidate_TS19b4              0.16254703  0.05963661   2.726  0.00743 **
+dfor$Candidate_TS_b4              -0.21480744  0.10969732  -1.958  0.05265 . 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.09529 on 114 degrees of freedom
+Multiple R-squared:  0.07389,	Adjusted R-squared:  0.0007716 
+F-statistic: 1.011 on 9 and 114 DF,  p-value: 0.4359
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.113822 -0.025727  0.006169  0.024828  0.104082 
+
+Coefficients:
+                                    Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                       -0.1317330  0.2281031  -0.578  0.56608   
+dfor$PopDens                       0.0266303  0.0086282   3.086  0.00324 **
+dfor$Perc_BachelorsDeg_and_higher  0.0002491  0.0008594   0.290  0.77304   
+dfor$perc_white                   -0.1179006  0.0938872  -1.256  0.21481   
+dfor$MedianAge_Total               0.0016514  0.0022035   0.749  0.45697   
+dfor$perc_Fem                      0.8644460  0.4464007   1.936  0.05825 . 
+dfor$Candidate_TS17               -0.0001172  0.0249995  -0.005  0.99628   
+dfor$Candidate_TS18                0.0138874  0.0275431   0.504  0.61625   
+dfor$Candidate_TS19b4             -0.0353427  0.0427454  -0.827  0.41212   
+dfor$Candidate_TS_b4               0.0829109  0.0674638   1.229  0.22462   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.04512 on 52 degrees of freedom
+Multiple R-squared:  0.7643,	Adjusted R-squared:  0.7235 
+F-statistic: 18.74 on 9 and 52 DF,  p-value: 0.0000000000002
+
+
+[[1]]
+
+Call:
+lm(formula = dfor$Candidate_VS ~ dfor$PopDens + dfor$Perc_BachelorsDeg_and_higher + 
+    dfor$perc_white + dfor$MedianAge_Total + dfor$perc_Fem + 
+    dfor$Candidate_TS17 + dfor$Candidate_TS18 + dfor$Candidate_TS19b4 + 
+    dfor$Candidate_TS_b4, data = na.omit(dfor))
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.234669 -0.059797 -0.000983  0.058272  0.227179 
+
+Coefficients:
+                                     Estimate  Std. Error t value Pr(>|t|)   
+(Intercept)                        0.54292845  0.32787395   1.656  0.10049   
+dfor$PopDens                       0.00027388  0.01243712   0.022  0.98247   
+dfor$Perc_BachelorsDeg_and_higher -0.00009652  0.00124271  -0.078  0.93823   
+dfor$perc_white                    0.00674078  0.13820593   0.049  0.96119   
+dfor$MedianAge_Total              -0.00034198  0.00323625  -0.106  0.91603   
+dfor$perc_Fem                     -0.06522464  0.62440830  -0.104  0.91699   
+dfor$Candidate_TS17                0.01130523  0.04328186   0.261  0.79441   
+dfor$Candidate_TS18                0.04239067  0.04627572   0.916  0.36158   
+dfor$Candidate_TS19b4              0.16254703  0.05963661   2.726  0.00743 **
+dfor$Candidate_TS_b4              -0.21480744  0.10969732  -1.958  0.05265 . 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.09529 on 114 degrees of freedom
+Multiple R-squared:  0.07389,	Adjusted R-squared:  0.0007716 
+F-statistic: 1.011 on 9 and 114 DF,  p-value: 0.4359
+
+

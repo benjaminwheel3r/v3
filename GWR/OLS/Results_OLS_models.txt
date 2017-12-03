@@ -1,0 +1,89 @@
+$RepTKC
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Coefficients:
+          (Intercept)    dfor$Candidate_TS18  dfor$Candidate_TS19b4  
+               0.1904                 0.1658                 0.2630  
+
+
+$RepTC
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Coefficients:
+          (Intercept)    dfor$Candidate_TS17    dfor$Candidate_TS18  dfor$Candidate_TS19b4  
+              0.09732                0.09139                0.17401                0.31111  
+
+
+$RepCK
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Coefficients:
+                      (Intercept)                       dfor$PopDens                dfor$Candidate_TS17  
+                         0.149961                          -0.023057                          -0.088832  
+            dfor$Candidate_TS19b4               dfor$Candidate_TS_b4  dfor$Perc_BachelorsDeg_and_higher  
+                        -0.200866                           0.125572                           0.002151  
+             dfor$MedianAge_Total                      dfor$perc_Fem  
+                        -0.004789                           0.690490  
+
+
+$RepTK
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Coefficients:
+          (Intercept)  dfor$Candidate_TS19b4   dfor$Candidate_TS_b4  
+               0.2590                 0.1964                 0.2005  
+
+
+$RepT
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Coefficients:
+                      (Intercept)                       dfor$PopDens  dfor$Perc_BachelorsDeg_and_higher  
+                         0.752180                           0.041509                          -0.003863  
+             dfor$MedianAge_Total                      dfor$perc_Fem  
+                         0.008375                          -1.273998  
+
+
+$RepK
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Coefficients:
+                      (Intercept)                       dfor$PopDens                dfor$Candidate_TS18  
+                         0.244108                          -0.019060                           0.175608  
+            dfor$Candidate_TS19b4  dfor$Perc_BachelorsDeg_and_higher  
+                        -0.232021                           0.004388  
+
+
+$RepC
+
+Call:
+lm(formula = obj$call$formula, data = dfor)
+
+Coefficients:
+         (Intercept)          dfor$PopDens  dfor$MedianAge_Total         dfor$perc_Fem  
+            0.078929             -0.015910             -0.004123              0.682444
+			
+			
+			
+SUMMARY STATISTICS:
+
+			
+
+			
+			
+			
+			
+			
+			
