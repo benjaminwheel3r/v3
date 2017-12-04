@@ -48,7 +48,7 @@ print(ruler.vector)
 #numVars = c(2)
 numVars = length(InDeVar)
 
-sorted.models <- GWmodel::gwr.model.sort(model.list,numVars = numVars, ruler.vector = ruler.vector)
+sorted.models <- GWmodel::gwr.model.sort(model.sel,numVars = numVars, ruler.vector = ruler.vector)
+model.list <- sorted.models[[1]]
 
-model.list[[2]] <- sorted.models[[1]]
-gwr.model.view(DeVar, InDeVars, sorted.models)
+gwr.model.view(DeVar, InDeVars, model.list)
