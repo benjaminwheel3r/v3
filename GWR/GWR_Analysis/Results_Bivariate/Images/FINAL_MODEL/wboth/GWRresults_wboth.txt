@@ -1,0 +1,80 @@
+   ***********************************************************************
+   *                       Package   GWmodel                             *
+   ***********************************************************************
+   Program starts at: 2018-01-28 18:09:40 
+   Call:
+   gwr.basic(formula = Candidate_VS ~ Candidate_TS18 + Candidate_TS19b4 + 
+    Candidate_TS17 + Perc_BachelorsDeg_and_higher + perc_Fem + 
+    MedianAge_Total + perc_white + PopDens, data = spdf_co2, 
+    bw = bw.gwr.2, kernel = "bisquare", adaptive = TRUE, F123.test = FALSE)
+
+   Dependent (y) variable:  Candidate_VS
+   Independent variables:  Candidate_TS18 Candidate_TS19b4 Candidate_TS17 Perc_BachelorsDeg_and_higher perc_Fem MedianAge_Total perc_white PopDens
+   Number of data points: 62
+   ***********************************************************************
+   *                    Results of Global Regression                     *
+   ***********************************************************************
+
+   Call:
+    lm(formula = formula, data = data)
+
+   Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.184148 -0.039278 -0.007735  0.030433  0.165017 
+
+   Coefficients:
+                                 Estimate Std. Error t value Pr(>|t|)   
+   (Intercept)                   0.758566   0.350513   2.164  0.03498 * 
+   Candidate_TS18                0.051237   0.054413   0.942  0.35065   
+   Candidate_TS19b4             -0.032742   0.054898  -0.596  0.55344   
+   Candidate_TS17               -0.038545   0.042324  -0.911  0.36656   
+   Perc_BachelorsDeg_and_higher -0.003863   0.001321  -2.924  0.00508 **
+   perc_Fem                     -1.149929   0.663356  -1.734  0.08882 . 
+   MedianAge_Total               0.008770   0.003471   2.526  0.01455 * 
+   perc_white                   -0.059136   0.144664  -0.409  0.68435   
+   PopDens                       0.037872   0.013180   2.873  0.00583 **
+
+   ---Significance stars
+   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+   Residual standard error: 0.07056 on 53 degrees of freedom
+   Multiple R-squared: 0.3725
+   Adjusted R-squared: 0.2778 
+   F-statistic: 3.933 on 8 and 53 DF,  p-value: 0.001042 
+   ***Extra Diagnostic information
+   Residual sum of squares: 0.2638824
+   Sigma(hat): 0.06631772
+   AIC:  -142.5336
+   AICc:  -138.2198
+   ***********************************************************************
+   *          Results of Geographically Weighted Regression              *
+   ***********************************************************************
+
+   *********************Model calibration information*********************
+   Kernel function: bisquare 
+   Adaptive bandwidth: 26 (number of nearest neighbours)
+   Regression points: the same locations as observations are used.
+   Distance metric: Euclidean distance metric is used.
+
+   ****************Summary of GWR coefficient estimates:******************
+                                         Min.       1st Qu.        Median       3rd Qu.   Max.
+   Intercept                    -0.4261000000  0.7531000000  0.9121000000  1.2770000000 3.2040
+   Candidate_TS18               -0.2887000000  0.0000008957  0.0687700000  0.0975500000 0.1459
+   Candidate_TS19b4             -0.1420000000 -0.0823900000 -0.0261700000 -0.0046330000 0.0672
+   Candidate_TS17               -0.1641000000 -0.0731100000 -0.0588200000 -0.0166400000 0.0895
+   Perc_BachelorsDeg_and_higher -0.0121700000 -0.0092340000 -0.0057850000 -0.0042070000 0.0001
+   perc_Fem                     -4.4940000000 -1.3540000000 -0.2595000000  0.1115000000 1.1780
+   MedianAge_Total              -0.0072440000  0.0014220000  0.0039750000  0.0088390000 0.0229
+   perc_white                   -1.1920000000 -0.6582000000 -0.3683000000 -0.1422000000 0.6211
+   PopDens                      -0.0607100000 -0.0230800000  0.0078050000  0.0487000000 0.0921
+   ************************Diagnostic information*************************
+   Number of data points: 62 
+   Effective number of parameters (2trace(S) - trace(S'S)): 41.40683 
+   Effective degrees of freedom (n-2trace(S) + trace(S'S)): 20.59317 
+   AICc (GWR book, Fotheringham, et al. 2002, p. 61, eq 2.33): -84.47401 
+   AIC (GWR book, Fotheringham, et al. 2002,GWR p. 96, eq. 4.22): -231.2239 
+   Residual sum of squares: 0.04932847 
+   R-square value:  0.8826984 
+   Adjusted R-square value:  0.6348015 
+
+   ***********************************************************************
+   Program stops at: 2018-01-28 18:09:40 

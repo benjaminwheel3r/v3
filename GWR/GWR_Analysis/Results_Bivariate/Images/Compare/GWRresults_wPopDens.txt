@@ -1,0 +1,78 @@
+   ***********************************************************************
+   *                       Package   GWmodel                             *
+   ***********************************************************************
+   Program starts at: 2018-01-28 18:17:32 
+   Call:
+   gwr.basic(formula = Candidate_VS ~ Candidate_TS18 + Candidate_TS19b4 + 
+    Candidate_TS17 + Perc_BachelorsDeg_and_higher + perc_Fem + 
+    MedianAge_Total + PopDens, data = spdf_co2, bw = bw.gwr.2, 
+    kernel = "bisquare", adaptive = TRUE, F123.test = FALSE)
+
+   Dependent (y) variable:  Candidate_VS
+   Independent variables:  Candidate_TS18 Candidate_TS19b4 Candidate_TS17 Perc_BachelorsDeg_and_higher perc_Fem MedianAge_Total PopDens
+   Number of data points: 62
+   ***********************************************************************
+   *                    Results of Global Regression                     *
+   ***********************************************************************
+
+   Call:
+    lm(formula = formula, data = data)
+
+   Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.187900 -0.040804 -0.009515  0.030032  0.158273 
+
+   Coefficients:
+                                 Estimate Std. Error t value   Pr(>|t|)    
+   (Intercept)                   0.717246   0.333023   2.154    0.03574 *  
+   Candidate_TS18                0.052210   0.053940   0.968    0.33740    
+   Candidate_TS19b4             -0.033744   0.054419  -0.620    0.53781    
+   Candidate_TS17               -0.039246   0.041961  -0.935    0.35380    
+   Perc_BachelorsDeg_and_higher -0.003960   0.001290  -3.071    0.00334 ** 
+   perc_Fem                     -1.195811   0.648730  -1.843    0.07077 .  
+   MedianAge_Total               0.008611   0.003423   2.516    0.01488 *  
+   PopDens                       0.042177   0.007861   5.365 0.00000174 ***
+
+   ---Significance stars
+   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+   Residual standard error: 0.07002 on 54 degrees of freedom
+   Multiple R-squared: 0.3705
+   Adjusted R-squared: 0.2889 
+   F-statistic: 4.541 on 7 and 54 DF,  p-value: 0.000485 
+   ***Extra Diagnostic information
+   Residual sum of squares: 0.2647144
+   Sigma(hat): 0.06642218
+   AIC:  -144.3384
+   AICc:  -140.8769
+   ***********************************************************************
+   *          Results of Geographically Weighted Regression              *
+   ***********************************************************************
+
+   *********************Model calibration information*********************
+   Kernel function: bisquare 
+   Adaptive bandwidth: 28 (number of nearest neighbours)
+   Regression points: the same locations as observations are used.
+   Distance metric: Euclidean distance metric is used.
+
+   ****************Summary of GWR coefficient estimates:******************
+                                      Min.    1st Qu.     Median    3rd Qu.    Max.
+   Intercept                     0.4910000  0.6048000  0.6941000  1.4070000  3.2080
+   Candidate_TS18               -0.2603000 -0.0068170  0.0417700  0.0867400  0.1470
+   Candidate_TS19b4             -0.0915700 -0.0460300 -0.0159000  0.0037130  0.0660
+   Candidate_TS17               -0.1619000 -0.0789800 -0.0643900 -0.0303300  0.0433
+   Perc_BachelorsDeg_and_higher -0.0095830 -0.0071100 -0.0041930 -0.0025360 -0.0002
+   perc_Fem                     -4.7520000 -2.7540000 -0.5569000 -0.3260000  0.4324
+   MedianAge_Total              -0.0077120 -0.0001012  0.0024800  0.0073780  0.0266
+   PopDens                      -0.0162600  0.0082540  0.0239100  0.0536100  0.0616
+   ************************Diagnostic information*************************
+   Number of data points: 62 
+   Effective number of parameters (2trace(S) - trace(S'S)): 35.42961 
+   Effective degrees of freedom (n-2trace(S) + trace(S'S)): 26.57039 
+   AICc (GWR book, Fotheringham, et al. 2002, p. 61, eq 2.33): -105.5274 
+   AIC (GWR book, Fotheringham, et al. 2002,GWR p. 96, eq. 4.22): -202.7249 
+   Residual sum of squares: 0.08523686 
+   R-square value:  0.7973094 
+   Adjusted R-square value:  0.516467 
+
+   ***********************************************************************
+   Program stops at: 2018-01-28 18:17:32 

@@ -3,39 +3,42 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-
 ```{r}
-Candidate = "TRUMP"
+#install.packages("shinyjs")
 require(sp)
-
+library(car)
 library(sp)
 library(rgdal)
 library(RColorBrewer)
 library(spdep)
-library(lattice)
-library(latticeExtra)
-library(maptools)
+#library(lattice)
+#library(latticeExtra)
+#library(maptools)
 library(tmap)
-library(spgwr)
+#library(spgwr)
 library(GWmodel)
-
+library(geojsonio)
+library(spdplyr)
+library(rmapshaper)
 #prevents lat long rounding
 options("scipen" = 100)
 setwd("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/GWR/GWR_Analysis")
 ```
 
 ```{r}
-#reads in Countylayer
+Candidate = "TRUMP"
+#reads in Countylayer  - WGS1984 - geographic Coordinate system
 co = readOGR(dsn = getwd(),layer = "NY_CNTY",integer64="warn.loss")
 df_co = data.frame(co)
 spdf_co = SpatialPolygonsDataFrame(co,df_co)
 
 d3 <- read.table("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3_310.csv",
-                 header=TRUE, sep=",", na.strings="0", dec=".", strip.white=TRUE)
+                 header=TRUE, sep=",", na.strings="NA", dec=".", strip.white=TRUE)
 d3$PopDens <- log(d3$TotPop/d3$SqMiles)
 d3$perc_white_comb <- d3$White_and_combination/d3$TotPop
 d3$perc_white <- d3$White_only/d3$TotPop
 d3$perc_Fem <- d3$FemOver18/d3$PopOver18
+d3$Estimate_MedianIncome_2015
 #Sorts etc
 sp = spdf_co[order(spdf_co$NAME), ]
 d3j = d3[order(d3$County), ]
@@ -43,41 +46,345 @@ d3j = d3[order(d3$County), ]
 #THis is a dumb intermediate
 df1 <- data.frame(d3j[ which(d3j$CANDIDATE==Candidate), ])
 outvar = "C:/Temp/FINAL_INPUTS/Box Sync/R/v4/v3_AllTags_002_AllSources_analysis_v3_310_subset.csv"
-write.csv(df1,outvar,na="NA")
+write.csv(df1,outvar,na="0")
 
 
-df = read.table(outvar,header=TRUE, sep=",", na.strings=0, dec=".",strip.white=TRUE)
+df = read.table(outvar,header=TRUE, sep=",", na.strings="NA", dec=".",strip.white=TRUE)
 spdf_co2 = merge(sp,df,by=(intersect(by.x,by.y)),by.x = "NAME", by.y = "County")
 
 DeVar = "Candidate_VS"
-InDeVar= c("Perc_BachelorsDeg_and_higher","perc_Fem","perc_white","PopDens", "MedianAge_Total") #,  "Candidate_TS17", "Candidate_TS18", "Candidate_TS19b4")
+InDeVar= c("Perc_BachelorsDeg_and_higher","perc_Fem","perc_white","PopDens","MedianAge_Total","Candidate_TS17", "Candidate_TS18", "Candidate_TS19b4") #, "Candidate_TS17", "Candidate_TS18", "Candidate_TS_b4"
 
-
-model.sel <- gwr.model.selection(DeVar,InDeVar, data=spdf_co2,bw=80,approach="aic",
-               adaptive=T,kernel="bisquare",dMat=NULL,p=2, theta=0, longlat=F)
+model.sel <- gwr.model.selection(DeVar,InDeVar, data=spdf_co2,bw=30,approach="aic", adaptive=T,kernel="bisquare",dMat=NULL,p=2, theta=0, longlat=T)
 model.list <- model.sel[[1]]
 gwr.model.view(DeVar, InDeVar, model.list)
 
-plot(model.sel[[2]][,4], col = "black", pch = 20, lty = 5, 
+#add variable for method and data to plot.
+column = 3
+plot(model.sel[[2]][,column], col = "black", pch = 20, lty = 5, 
 	main = "Alternative view of GWR model selection procedure", 
 	ylab = "AICc", xlab = "Model number", type = "b")
 
-
-
-ruler.vector <- model.sel[[2]][,3]
+ruler.vector <- model.sel[[2]][,column]
 lvar <- length(InDeVar)
 
-sorted.models <- GWmodel::gwr.model.sort(model.sel,lvar, ruler.vector)
+sorted.models <- gwr.model.sort(model.sel,lvar, ruler.vector)
 
 model.list <- sorted.models[[1]]
 gwr.model.view(DeVar, InDeVar, model.list)
 #bandwidth, AIC, AICc, RSS
 model.sel[[2]] 
 
-plot(sorted.models[[2]][,2], col = "black", pch = 20, lty = 5, 
+plot(sorted.models[[2]][,column], col = "black", pch = 20, lty = 5, 
 	main = "Alternative view of GWR model selection procedure", 
 	ylab = "AICc", xlab = "Model number", type = "b")
+
+sorted.models[[2]][,column]
+sorted.models[[1]]
+
+```
+
+The below comes from the code example on p.7 of the GWModel Documentation.
+See p.27 on Collinearity...
+
+```{r bandwidth selection}
+DM <- gw.dist(dp.locat = coordinates(spdf_co2))
+```
+
+```{r}
+lm.global <- lm(Candidate_VS~Candidate_TS18+Candidate_TS19b4+Candidate_TS17+Perc_BachelorsDeg_and_higher+perc_Fem+MedianAge_Total+PopDens, data = spdf_co2)
+summary(lm.global)
+#Candidate_TS_b4+PopDens+perc_white
+mod = vif(lm.global) # variance inflation factors 
+mod2 = sqrt(vif(lm.global)) > 2 # problem?
+mod
+```
+
+```{r}
+f1 <- Candidate_VS~Candidate_TS18+Candidate_TS19b4+Candidate_TS17+Perc_BachelorsDeg_and_higher+perc_Fem+MedianAge_Total+perc_white+PopDens
+m1 <- lm(f1, data = spdf_co2)
+summary(m1)
+
+lm.global <- lm(Candidate_VS~Candidate_TS18+Candidate_TS19b4+Candidate_TS17+Perc_BachelorsDeg_and_higher+perc_Fem+MedianAge_Total+perc_white+PopDens, data = spdf_co2)
+summary(lm.global)
+lm.global$residuals
+```
+
+
+```{r}
+lm.global <- lm(Candidate_VS~Candidate_TS18+Candidate_TS19b4+Candidate_TS17+Perc_BachelorsDeg_and_higher+perc_Fem+MedianAge_Total+perc_white+PopDens, data = spdf_co2)
+summary(lm.global)
+
+mod = vif(lm.global) # variance inflation factors 
+mod2 = sqrt(vif(lm.global)) > 2 # problem?
+mod
+
+
+bw.gwr.1 <- bw.gwr(Candidate_VS~Candidate_TS18+Candidate_TS19b4+Candidate_TS17+Perc_BachelorsDeg_and_higher+perc_Fem+MedianAge_Total+perc_white+PopDens, data = spdf_co2, approach = "AICc",
+	kernel = "bisquare", adaptive = TRUE, longlat = TRUE)
+bw.gwr.2 <- bw.gwr(Candidate_VS~Candidate_TS18+Candidate_TS19b4+Candidate_TS17+Perc_BachelorsDeg_and_higher+perc_Fem+MedianAge_Total+PopDens+perc_white, data = spdf_co2, approach = "cv", kernel = "bisquare", adaptive=TRUE)
+bw.gwr.1
+bw.gwr.2
+
+#Model Selection
+
+model.sel <- model.selection.gwr(DeVar ,InDeVar, data = spdf_co2, kernel = "bisquare", adaptive = TRUE, bw = bw.gwr.1) 
+sorted.models <- model.sort.gwr(model.sel, numVars = length(InDeVar), ruler.vector = model.sel[[2]][,2]) 
+model.list <- sorted.models[[1]]
+model.list
+model.view.gwr(DeVar, InDeVar, model.list = model.list)
+model.sel
+
+plot(sorted.models[[2]][,3], col = "black", pch = 20, lty = 5, 
+	main = "Alternative view of GWR model selection procedure",  
+	ylab = "AICc", xlab = "Model number", type = "b")
+
+
+gwr.res <- gwr.basic(Candidate_VS~Candidate_TS18+Candidate_TS19b4+Candidate_TS17+Perc_BachelorsDeg_and_higher+perc_Fem+MedianAge_Total+PopDens+perc_white,
+                     data = spdf_co2, bw = bw.gwr.2, kernel = "bisquare", adaptive = TRUE, F123.test = FALSE)
+
+writeGWR(gwr.res)
+```
+
+
+```{r, eval=FALSE, include=FALSE}
+#OUtput
+writeGWR(gwr.res)
+sdf <- gwr.res$SDF
+colm0 <- names(gwr.res$SDF)
+sdfexport <- gwr.res$SDF
+
+sdfexport <- sdfexport %>% rename(Intrcpt = Intercept)
+sdfexport <- sdfexport %>% rename(TS19b4 = Candidate_TS19b4)
+sdfexport <- sdfexport %>% rename(TS17 = Candidate_TS17)
+sdfexport <- sdfexport %>% rename(TS_b4 = Candidate_TS_b4)
+sdfexport <- sdfexport %>% rename(TS18 = Candidate_TS18)
+sdfexport <- sdfexport %>% rename(pc_bach = Perc_BachelorsDeg_and_higher)
+sdfexport <- sdfexport %>% rename(PopDens = PopDens)
+sdfexport <- sdfexport %>% rename(pc_Fem = perc_Fem)
+sdfexport <- sdfexport %>% rename(pc_white = perc_white)
+sdfexport <- sdfexport %>% rename(MedAge = MedianAge_Total)
+sdfexport <- sdfexport %>% rename(Intrcpt_SE = Intercept_SE)
+sdfexport <- sdfexport %>% rename(TS19b4_SE = Candidate_TS19b4_SE)
+sdfexport <- sdfexport %>% rename(TS17_SE = Candidate_TS17_SE)
+sdfexport <- sdfexport %>% rename(TS_b4_SE = Candidate_TS_b4_SE)
+sdfexport <- sdfexport %>% rename(TS18_SE = Candidate_TS18_SE)
+sdfexport <- sdfexport %>% rename(pc_bach_SE = Perc_BachelorsDeg_and_higher_SE)
+sdfexport <- sdfexport %>% rename(PopDens_SE = PopDens_SE)
+sdfexport <- sdfexport %>% rename(pc_Fem_SE = perc_Fem_SE)
+sdfexport <- sdfexport %>% rename(pc_wht_SE = perc_white_SE)
+sdfexport <- sdfexport %>% rename(MedAge_SE = MedianAge_Total_SE)
+sdfexport <- sdfexport %>% rename(Intrcpt_TV = Intercept_TV)
+sdfexport <- sdfexport %>% rename(TS19b4_TV = Candidate_TS19b4_TV)
+sdfexport <- sdfexport %>% rename(TS17_TV = Candidate_TS17_TV)
+sdfexport <- sdfexport %>% rename(TS_b4_TV = Candidate_TS_b4_TV)
+sdfexport <- sdfexport %>% rename(TS18_TV = Candidate_TS18_TV)
+sdfexport <- sdfexport %>% rename(pc_bach_TV = Perc_BachelorsDeg_and_higher_TV)
+sdfexport <- sdfexport %>% rename(PopDens_TV = PopDens_TV)
+sdfexport <- sdfexport %>% rename(pc_Fem_TV = perc_Fem_TV)
+sdfexport <- sdfexport %>% rename(pc_wht_TV = perc_white_TV)
+sdfexport <- sdfexport %>% rename(MedAge_TV = MedianAge_Total_TV)
+sdfexport <- sdfexport %>% rename(Stud_resid = Stud_residual)
+#Fields: https://github.com/cran/GWmodel/blob/master/R/gwr.basic.r
+
+
+writeOGR(sdfexport, dsn = getwd(), "NY_OUTPUT",driver="ESRI Shapefile")
+
+```
+
+```{r, eval=FALSE, include=FALSE}
+mypalette.6 <- brewer.pal(6, "Spectral")
+
+map.na = list("SpatialPolygonsRescale", layout.north.arrow(),
+offset = c(329000,261500), scale = 4000, col=1)
+map.scale.1 = list("SpatialPolygonsRescale", layout.scale.bar(),
+offset = c(326500,217000), scale = 5000, col=1, fill=c("transparent","blue"))
+map.scale.2  = list("sp.text", c(326500,217900), "0", cex=0.9, col=1)
+map.scale.3  = list("sp.text", c(331500,217900), "5km", cex=0.9, col=1)
+map.layout <- list(map.na,map.scale.1,map.scale.2,map.scale.3)
+
+
+spplot(gwr.res$SDF, "Candidate_TS18", key.space = "right", 
+	main = "Basic GW regression coefficient estimates for Candidate_TS18",
+	sp.layout = map.layout)
+
+spplot(gwr.res$SDF, "perc_white", key.space = "right", 
+	main = "Basic GW regression coefficient estimates for perc_white",
+	sp.layout = map.layout)
+```
+
+```{r}
+setwd("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/GWR/GWR_Analysis/Results_Bivariate/Images/FINAL_MODEL/wboth_borders")
+sdf <- gwr.res$SDF
+sdf$residual_ols <- lm.global$residuals
+sdf$yhat_ols <- lm.global$fitted.values
+char = "_TV"
+colm = colnames(sdf@data)[grepl(char, colnames(sdf@data))]
+suffix = "_wBoth_noM"
+
+for (i in colm)
+{
+
+map = tm_shape(sdf) +tm_fill(col = i, breaks = c(-Inf,-4, -2.00,-1.67, 0, 1.67, 2.00, 4, Inf)) +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+print(map)
+save_tmap(tm = map, filename = paste(i,suffix,".png",sep = ''))
+}
+
+n = 8
+colm = colnames(sdf@data)[1:(n+1)]
+suffix = "_Coefs_TV"
+for (i in colm)
+{
+val <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_TV) > 1.67",sep =''))),]
+Coef_map = tm_shape(sdf)+tm_borders()+tm_shape(val) +tm_fill(col = i) + tm_legend(outside = F, text.size =.8) + tm_borders()
+try(print(Coef_map))
+try(save_tmap(tm = Coef_map, filename = paste(i,suffix,".png",sep = '')))
+rm(Coef_map)
+}
+```
+
+```{r}
+setwd("C:/Temp/FINAL_INPUTS/Box Sync/R/v4/GWR/GWR_Analysis/Results_Bivariate/Images/FINAL_MODEL/wboth_borders")
+tmap_mode("plot")
+est = c(.3,.4,.5,.6,.7,.8,.9)
+r2 = tm_shape(sdf) +tm_fill(col = "Local_R2") +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+save_tmap(tm = r2, filename = paste("r2",suffix,".png",sep = ''))
+r2
+
+y = tm_shape(sdf) +tm_fill(col = "y", breaks = est, palette = c('white','grey','black')) +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+save_tmap(tm = y, filename = paste("y",suffix,".png",sep = ''))
+y
+
+yhat = tm_shape(sdf) +tm_fill(col = "yhat", breaks = est, palette = c('white','grey','black')) +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+save_tmap(tm = yhat, filename = paste("yhat",suffix,".png",sep = ''))
+yhat
+
+StudRes= tm_shape(sdf) +tm_fill(col = "Stud_residual") +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+save_tmap(tm = StudRes, filename = paste("StudRes",suffix,".png",sep = ''))
+StudRes
+
+res= tm_shape(sdf) +tm_fill(col = "residual",breaks = c(-Inf,-0.05, -0.02,-.01, 0, 0.01, 0.02, 0.05, Inf)) +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+save_tmap(tm = res, filename = paste("res",suffix,".png",sep = ''))
+res
+
+res_ols = tm_shape(sdf) +tm_fill(col = "residual_ols") +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+save_tmap(tm = res_ols, filename = paste("residuals_ols",suffix,".png",sep = ''))
+res_ols
+
+yhat_ols = tm_shape(sdf) +tm_fill(col = "yhat_ols", breaks = est, palette = c('white','grey','black')) +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+save_tmap(tm = yhat_ols, filename = paste("yhat_ols",suffix,".png",sep = ''))
+yhat_ols
+
+```
+
+```{r determining Neighbours}
+nb <- poly2nb(spdf_co2,queen=TRUE,row.names = spdf_co2$NAME)
+nb[43][1] = c(as.integer(24))
+#adjusting for Staten Island (Richmond County,#43)  connection to Kings County(#24) via Bridge.
+nb_rook <- poly2nb(spdf_co2,queen=FALSE)
+nb_snap <- poly2nb(spdf_co2,
+                   queen = TRUE,
+                   snap = 0
+                     )
+
+```
+
+### Computing Weights
+http://geog.uoregon.edu/bartlein/old_courses/geog414f03/lectures/lec09.htm
+this link provides a description of code and an example of using different values for lags. It may be worth considering...
+```{r Computing Weights}
+lw = nb2listw(nb, style="W", zero.policy = TRUE)
+lw
+moran.mc(sdf$residual_ols,lw,999)
+morantest2 = lm.morantest(m1,lw)
+morantest2
+
+moran.mc(sdf$residual_ols,lw,999)
+
+moran.test(sdf$residual,lw)
+```
+
+```{r histogram}
+MIi =morantest2$estimate[1][1]
+n <- 699   # Define the number of simulations
+I.r <- vector()  # Create an empty vector
+
+for (i in 1:n){
+  # Randomly shuffle income values
+  x <- sample(sdf$residual_ols, replace=FALSE)
+  # Compute new set of lagged values
+  x.lag <- lag.listw(lw, x)
+  # Compute the regression slope
+  M.r <- lm(x.lag ~ x)
+  I.r[i] <- coef(M.r)[2]
+}
+
+# Plot histogram of simulated Moran's I values
+# then add our observed Moran's I value to the plot
+png(filename='Plotted_MoransI_histogram.png')
+plot.new()
+hist(I.r, main=NULL, plot = TRUE, xlim = c(-.6,.6),ylim =c(0,175))
+abline(v=MIi, col="red")
+text(x = MIi,y = 100,labels = paste("Moran's I:",round(MIi,4)),pos=2,cex=1.0,las=2,srt =90)
+dev.off()
 
 ```
 
 
+```{r Histogram GWR}
+moran.mc(sdf$Stud_residual,lw,999)
+test_after = moran.mc(sdf$residual,lw,999)
+test_after$statistic
+
+MIi =test_after$statistic
+n <- 999   # Define the number of simulations
+I.r <- vector()  # Create an empty vector
+
+for (i in 1:n){
+  # Randomly shuffle income values
+  x <- sample(sdf$residual, replace=FALSE)
+  # Compute new set of lagged values
+  x.lag <- lag.listw(lw, x)
+  # Compute the regression slope
+  M.r <- lm(x.lag ~ x)
+  I.r[i] <- coef(M.r)[2]
+}
+
+# Plot histogram of simulated Moran's I values
+# then add our observed Moran's I value to the plot
+png(filename='Plotted_MoransI_histogram_GWR.png')
+plot.new()
+hist(I.r, main=NULL, plot = TRUE, xlim = c(-.5,.5),ylim =c(0,250))
+abline(v=MIi, col="red")
+text(x = MIi,y = 100,labels = paste("Moran's I:",round(MIi,4)),pos=2,cex=1.0,las=2,srt =90)
+dev.off()
+```
+
+
+```{r SE per County}
+char = "_SE"
+colm = colnames(sdf@data)[grepl(char, colnames(sdf@data))]
+
+for (i in colm)
+{
+print(spplot(gwr.res$SDF, i, key.space = "right", 
+	main = paste("Standard Error for",i),
+	sp.layout = map.layout))
+}
+tm_shape(sdf) +tm_fill(col = "Local_R2") +  tm_legend(outside = TRUE, text.size = .8)
+```
+```{r Coefficient_Maps}
+n = 8
+colm = colnames(sdf@data)[1:(n+1)]
+
+for (i in colm)
+{
+val =sdf@data[,paste(i,"_TV",sep ='')]
+val > -1.96
+print(tm_shape(sdf) +tm_fill(col = i) + tm_legend(outside = TRUE, text.size = .8)+tm_borders())
+}
+
+```
+```{r}
+
+```

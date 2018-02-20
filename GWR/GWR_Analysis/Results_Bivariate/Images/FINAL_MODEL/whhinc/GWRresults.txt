@@ -1,0 +1,81 @@
+   ***********************************************************************
+   *                       Package   GWmodel                             *
+   ***********************************************************************
+   Program starts at: 2018-02-15 22:53:09 
+   Call:
+   gwr.basic(formula = Candidate_VS ~ Candidate_TS18 + Candidate_TS19b4 + 
+    Candidate_TS17 + Perc_BachelorsDeg_and_higher + perc_Fem + 
+    MedianAge_Total + perc_white + Estimate_MedianIncome_2015, 
+    data = spdf_co2, bw = bw.gwr.2, kernel = "bisquare", adaptive = TRUE, 
+    F123.test = FALSE)
+
+   Dependent (y) variable:  Candidate_VS
+   Independent variables:  Candidate_TS18 Candidate_TS19b4 Candidate_TS17 Perc_BachelorsDeg_and_higher perc_Fem MedianAge_Total perc_white Estimate_MedianIncome_2015
+   Number of data points: 62
+   ***********************************************************************
+   *                    Results of Global Regression                     *
+   ***********************************************************************
+
+   Call:
+    lm(formula = formula, data = data)
+
+   Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.098505 -0.038062 -0.001972  0.024291  0.139248 
+
+   Coefficients:
+                                     Estimate    Std. Error t value       Pr(>|t|)    
+   (Intercept)                   0.4904607403  0.2671321697   1.836         0.0720 .  
+   Candidate_TS18                0.1073280593  0.0416834201   2.575         0.0129 *  
+   Candidate_TS19b4             -0.0251754699  0.0410431854  -0.613         0.5422    
+   Candidate_TS17               -0.0476807503  0.0318702209  -1.496         0.1406    
+   Perc_BachelorsDeg_and_higher -0.0094070142  0.0013150430  -7.153 0.000000002554 ***
+   perc_Fem                      0.4177393514  0.4659043406   0.897         0.3740    
+   MedianAge_Total               0.0018176462  0.0026454462   0.687         0.4950    
+   perc_white                   -0.3548591854  0.0656341456  -5.407 0.000001562443 ***
+   Estimate_MedianIncome_2015    0.0000057723  0.0000007774   7.425 0.000000000934 ***
+
+   ---Significance stars
+   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+   Residual standard error: 0.05311 on 53 degrees of freedom
+   Multiple R-squared: 0.6445
+   Adjusted R-squared: 0.5909 
+   F-statistic: 12.01 on 8 and 53 DF,  p-value: 0.00000000137 
+   ***Extra Diagnostic information
+   Residual sum of squares: 0.1494903
+   Sigma(hat): 0.04991497
+   AIC:  -177.7664
+   AICc:  -173.4527
+   ***********************************************************************
+   *          Results of Geographically Weighted Regression              *
+   ***********************************************************************
+
+   *********************Model calibration information*********************
+   Kernel function: bisquare 
+   Adaptive bandwidth: 28 (number of nearest neighbours)
+   Regression points: the same locations as observations are used.
+   Distance metric: Euclidean distance metric is used.
+
+   ****************Summary of GWR coefficient estimates:******************
+                                         Min.       1st Qu.        Median       3rd Qu.    Max.
+   Intercept                     0.4180000000  0.9501000000  1.1180000000  1.6390000000  2.1380
+   Candidate_TS18               -0.0083070000  0.0679300000  0.0965700000  0.1280000000  0.1576
+   Candidate_TS19b4             -0.0979500000 -0.0429500000 -0.0205000000  0.0402900000  0.1097
+   Candidate_TS17               -0.0963700000 -0.0711400000 -0.0532100000 -0.0132600000  0.0842
+   Perc_BachelorsDeg_and_higher -0.0118600000 -0.0101000000 -0.0075930000 -0.0048450000 -0.0008
+   perc_Fem                     -2.3190000000 -1.1400000000 -0.3423000000  0.0829500000  0.6578
+   MedianAge_Total              -0.0201500000 -0.0017000000  0.0030830000  0.0055890000  0.0102
+   perc_white                   -0.8458000000 -0.6118000000 -0.3662000000 -0.2019000000 -0.0209
+   Estimate_MedianIncome_2015   -0.0000078320 -0.0000008913  0.0000008598  0.0000058340  0.0000
+   ************************Diagnostic information*************************
+   Number of data points: 62 
+   Effective number of parameters (2trace(S) - trace(S'S)): 39.07396 
+   Effective degrees of freedom (n-2trace(S) + trace(S'S)): 22.92604 
+   AICc (GWR book, Fotheringham, et al. 2002, p. 61, eq 2.33): -125.2679 
+   AIC (GWR book, Fotheringham, et al. 2002,GWR p. 96, eq. 4.22): -249.4187 
+   Residual sum of squares: 0.03809776 
+   R-square value:  0.9094047 
+   Adjusted R-square value:  0.7479566 
+
+   ***********************************************************************
+   Program stops at: 2018-02-15 22:53:09 

@@ -1,0 +1,64 @@
+   ***********************************************************************
+   *                       Package   GWmodel                             *
+   ***********************************************************************
+   Program starts at: 2018-01-27 22:50:18 
+   Call:
+   gwr.basic(formula = Candidate_VS ~ Candidate_TS19b4, data = spdf_co2, 
+    bw = bw.gwr.2, kernel = "bisquare", adaptive = TRUE, F123.test = FALSE)
+
+   Dependent (y) variable:  Candidate_VS
+   Independent variables:  Candidate_TS19b4
+   Number of data points: 62
+   ***********************************************************************
+   *                    Results of Global Regression                     *
+   ***********************************************************************
+
+   Call:
+    lm(formula = formula, data = data)
+
+   Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.18651 -0.06086 -0.01457  0.06799  0.25162 
+
+   Coefficients:
+                    Estimate Std. Error t value            Pr(>|t|)    
+   (Intercept)       0.53896    0.04318  12.482 <0.0000000000000002 ***
+   Candidate_TS19b4  0.03308    0.05693   0.581               0.563    
+
+   ---Significance stars
+   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+   Residual standard error: 0.08348 on 60 degrees of freedom
+   Multiple R-squared: 0.005597
+   Adjusted R-squared: -0.01098 
+   F-statistic: 0.3377 on 1 and 60 DF,  p-value: 0.5633 
+   ***Extra Diagnostic information
+   Residual sum of squares: 0.4181733
+   Sigma(hat): 0.08348386
+   AIC:  -127.9892
+   AICc:  -127.5754
+   ***********************************************************************
+   *          Results of Geographically Weighted Regression              *
+   ***********************************************************************
+
+   *********************Model calibration information*********************
+   Kernel function: bisquare 
+   Adaptive bandwidth: 21 (number of nearest neighbours)
+   Regression points: the same locations as observations are used.
+   Distance metric: Euclidean distance metric is used.
+
+   ****************Summary of GWR coefficient estimates:******************
+                         Min.   1st Qu.    Median   3rd Qu.   Max.
+   Intercept         0.373300  0.493200  0.539800  0.558300 0.7065
+   Candidate_TS19b4 -0.093740 -0.008543  0.022450  0.067440 0.1484
+   ************************Diagnostic information*************************
+   Number of data points: 62 
+   Effective number of parameters (2trace(S) - trace(S'S)): 16.54143 
+   Effective degrees of freedom (n-2trace(S) + trace(S'S)): 45.45857 
+   AICc (GWR book, Fotheringham, et al. 2002, p. 61, eq 2.33): -153.9251 
+   AIC (GWR book, Fotheringham, et al. 2002,GWR p. 96, eq. 4.22): -177.5981 
+   Residual sum of squares: 0.168108 
+   R-square value:  0.6002444 
+   Adjusted R-square value:  0.4515097 
+
+   ***********************************************************************
+   Program stops at: 2018-01-27 22:50:18 
