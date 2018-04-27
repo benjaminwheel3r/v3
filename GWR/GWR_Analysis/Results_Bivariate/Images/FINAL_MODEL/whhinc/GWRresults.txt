@@ -1,7 +1,7 @@
    ***********************************************************************
    *                       Package   GWmodel                             *
    ***********************************************************************
-   Program starts at: 2018-02-15 22:53:09 
+   Program starts at: 2018-03-04 18:13:58 
    Call:
    gwr.basic(formula = Candidate_VS ~ Candidate_TS18 + Candidate_TS19b4 + 
     Candidate_TS17 + Perc_BachelorsDeg_and_higher + perc_Fem + 
@@ -78,4 +78,4 @@
    Adjusted R-square value:  0.7479566 
 
    ***********************************************************************
-   Program stops at: 2018-02-15 22:53:09 
+   Program stops at: 2018-03-04 18:13:58 

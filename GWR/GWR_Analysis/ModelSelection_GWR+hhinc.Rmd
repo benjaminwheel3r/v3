@@ -28,7 +28,7 @@ library(spdplyr)
 library(rmapshaper)
 #prevents lat long rounding
 options("scipen" = 100)
-
+source('C:/Temp/FINAL_INPUTS/Box Sync/R/v4/GWR/GWR_Analysis/GWR_P_adjust.R')
 ```
 
 ```{r}
@@ -155,13 +155,26 @@ writeGWR(gwr.res)
 ```
 
 ```{r}
+qt(0.05,39.0739621)
+qt(0.025,39.0739621)
+qt(0.005,39.0739621)
+pvals <- round(2 * (1 - pt(abs(qt(0.05,39.0739621)), enp)), 3)
+pvals
+
+```
+
+
+```{r}
 sdf <- gwr.res$SDF
 sdf$residual_ols <- lm.global$residuals
 sdf$yhat_ols <- lm.global$fitted.values
 
-adjustedtval <- gwr.t.adjust(gwr.res)
-adjustedtval$results$t
-helpme <- cbind(sdf,adjustedtval$results$t)
+#adjustedtval <- gwr.t.adjust(gwr.res)
+adjustedtval <- gwr.t.adjust_BHW(gwr.res)
+
+sdf <- cbind(sdf,adjustedtval$results$by) # replaces sdf with new sdf
+sdf <- cbind(sdf,adjustedtval$results$p)
+sdf <- cbind(sdf,adjustedtval$results$t)
 
 char = "_TV"
 colm = colnames(sdf@data)[grepl(char, colnames(sdf@data))]
@@ -170,8 +183,7 @@ suffix = "_wBoth_noM"
 
 for (i in colm)
 {
-
-map = tm_shape(sdf) +tm_fill(col = i, breaks = c(-Inf,-4, -2.00,-1.67, 0, 1.67, 2.00, 4, Inf)) +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
+map = tm_shape(sdf) +tm_fill(col = i, breaks = c(-Inf,-2.70, -2.02,-1.6847, 0, 1.6847, 2.02, 2.70, Inf)) +  tm_legend(outside = FALSE, text.size = .8)+tm_borders()
 print(map)
 save_tmap(tm = map, filename = paste(i,suffix,".png",sep = ''))
 }
@@ -180,36 +192,51 @@ n = 8
 colm = colnames(sdf@data)[1:(n+1)]
 suffix = "_Coefs_TV"
 f <- c()
+f<- c(f,paste("COL",'~CI',"min","max","median","NROW",sep = ','))
+
 for (i in colm)
 {
-  val90 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_TV) > 1.701",sep =''))),]
-  val95 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_TV) > 2.048",sep =''))),]
-  val99 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_TV) > 2.763",sep =''))),]
-  col90 = eval(parse(text=paste("val@data$",i,sep ='')))
-  col95 = eval(parse(text=paste("val@data$",i,sep ='')))
-  col99 = eval(parse(text=paste("val@data$",i,sep ='')))
-  f<- c(f,paste(i,'90',
-                min(col90),max(col90),median(col90),NROW(col90)
-              ,sep = ',')
-        )
-  f<- c(f,paste(i,'95',
-                min(col95),max(col95),median(col95),NROW(col95)
-              ,sep = ',')
-        )
-  f<- c(f,paste(i,'99',
-                min(col99),max(col99),median(col99),NROW(col99)
-              ,sep = ',')
-        )
+  val90 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p_by) < .1",sep =''))),]
+  val95 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p_by) < .05",sep =''))),]
+  val99 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p_by) < .01",sep =''))),]
+  col90 = eval(parse(text=paste("val90@data$",i,sep ='')))
+  col95 = eval(parse(text=paste("val95@data$",i,sep ='')))
+  col99 = eval(parse(text=paste("val99@data$",i,sep ='')))
+  f<- c(f,paste(i,'90_adjusted', min(col90),max(col90),median(col90),NROW(col90),sep = ','))
+  f<- c(f,paste(i,'95_adjusted', min(col95),max(col95),median(col95),NROW(col95),sep = ','))
+  f<- c(f,paste(i,'99_adjusted', min(col99),max(col99),median(col99),NROW(col99),sep = ','))
+  
+
+  if(i == "Estimate_MedianIncome_2015")
+{ 
+
+Coef_map = tm_shape(sdf)+tm_borders()+tm_shape(val90) +tm_fill(col = i) + tm_legend(outside = F, text.size =.8) + tm_layout(legend.format = list(format ='f', scientific = TRUE,digits = 8))+tm_borders()
+try(save_tmap(tm = Coef_map, filename = paste(i,suffix,"_by.png",sep = '')))
+} 
+  else{
+  Coef_map = tm_shape(sdf)+tm_borders()+tm_shape(val90) +tm_fill(col = i) + tm_legend(outside = F, text.size =.8) + tm_borders()
+  try(print(Coef_map))
+  try(save_tmap(tm = Coef_map, filename = paste(i,suffix,"_by.png",sep = '')))
+}
+  rm(Coef_map)
+  val90 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p) < .1",sep =''))),]
+  val95 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p) < .05",sep =''))),]
+  val99 <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p) < .01",sep =''))),]
+  col90 = eval(parse(text=paste("val90@data$",i,sep ='')))
+  col95 = eval(parse(text=paste("val95@data$",i,sep ='')))
+  col99 = eval(parse(text=paste("val99@data$",i,sep ='')))
+  f<- c(f,paste(i,'90', min(col90),max(col90),median(col90),NROW(col90),sep = ','))
+  f<- c(f,paste(i,'95', min(col95),max(col95),median(col95),NROW(col95),sep = ','))
+  f<- c(f,paste(i,'99', min(col99),max(col99),median(col99),NROW(col99),sep = ','))
   
   if(i == "Estimate_MedianIncome_2015")
-{  val <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_TV) > 1.701",sep =''))),]
+{  val <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p) < .1",sep =''))),]
 Coef_map = tm_shape(sdf)+tm_borders()+tm_shape(val) +tm_fill(col = i) + tm_legend(outside = F, text.size =.8) + tm_borders()+tm_layout(legend.format = list(format ='f', scientific = TRUE,digits = 6))
 
 try(print(Coef_map))
 try(save_tmap(tm = Coef_map, filename = paste(i,suffix,".png",sep = '')))
 rm(Coef_map)}
-
-  else{val <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_TV) > 1.67",sep =''))),]
+else{val <- sdf[eval(parse(text=paste("abs(sdf@data$",i,"_p) < .1",sep =''))),]
 Coef_map = tm_shape(sdf)+tm_borders()+tm_shape(val) +tm_fill(col = i) + tm_legend(outside = F, text.size =.8) + tm_borders()
 
 try(print(Coef_map))
@@ -217,8 +244,8 @@ try(save_tmap(tm = Coef_map, filename = paste(i,suffix,".png",sep = '')))
 rm(Coef_map)
 }
 }
-
-write(f, file = 'data_read_out.csv')
+write(f, file = 'data_read_out2.csv')
+write.table(sdf@data,file = "sourceData.csv",sep = ',')
 ```
 
 ```{r}
